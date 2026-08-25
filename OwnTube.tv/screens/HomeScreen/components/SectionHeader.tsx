@@ -5,14 +5,16 @@ import { Platform, StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useBreakpoints } from "../../../hooks";
 import { IS_TV_LAYOUT } from "../../../utils/tvPreview";
+import { ReactNode } from "react";
 
 interface SectionHeaderProps {
   title: string;
   link?: { route: string; text: string };
   channelNo?: number;
+  hero?: ReactNode;
 }
 
-export const SectionHeader = ({ title, link, channelNo }: SectionHeaderProps) => {
+export const SectionHeader = ({ title, link, channelNo, hero }: SectionHeaderProps) => {
   const { colors } = useTheme();
   const { backend } = useLocalSearchParams();
   const { isMobile } = useBreakpoints();
@@ -20,53 +22,56 @@ export const SectionHeader = ({ title, link, channelNo }: SectionHeaderProps) =>
   const isLinkVisible = !!link && !Platform.isTV;
 
   return (
-    <View
-      style={[
-        {
-          paddingTop: isMobile ? spacing.sm : spacing.xl,
-          backgroundColor: colors.background,
-          marginLeft: (!isMobile ? spacing.xl : 0) - Number(Boolean(Platform.isTV)) * 24,
-          paddingLeft: (isMobile ? 10 : 0) + Number(Boolean(Platform.isTV)) * 24,
-          paddingRight: (isMobile ? spacing.sm : 48) - Number(Boolean(Platform.isTV)) * 24,
-        },
-        styles.container,
-      ]}
-    >
+    <View style={{ backgroundColor: colors.background }}>
+      {IS_TV_LAYOUT && hero}
       <View
         style={[
           {
-            // On-air accent bar — amber on the couch (broadcast-lineup feel).
-            borderLeftColor: IS_TV_LAYOUT ? colors.theme500 : colors.theme200,
+            paddingTop: isMobile ? spacing.sm : spacing.xl,
+            backgroundColor: colors.background,
+            marginLeft: (!isMobile ? spacing.xl : 0) - Number(Boolean(Platform.isTV)) * 24,
+            paddingLeft: (isMobile ? 10 : 0) + Number(Boolean(Platform.isTV)) * 24,
+            paddingRight: (isMobile ? spacing.sm : 48) - Number(Boolean(Platform.isTV)) * 24,
           },
-          styles.textContainer,
+          styles.container,
         ]}
       >
-        <View style={styles.titleRow}>
-          {IS_TV_LAYOUT && channelNo != null && (
-            <View style={[styles.chBadge, { borderColor: colors.theme500 }]}>
-              <Typography style={styles.chText} color={colors.theme500} fontWeight="ExtraBold">
-                {`CH ${String(channelNo).padStart(2, "0")}`}
-              </Typography>
-            </View>
-          )}
-          {IS_TV_LAYOUT && (
-            <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
-          )}
-          <Typography
-            style={[styles.text, IS_TV_LAYOUT && styles.textTV]}
-            color={colors.theme950}
-            fontSize="sizeXL"
-            fontWeight="ExtraBold"
-          >
-            {title}
-          </Typography>
+        <View
+          style={[
+            {
+              // On-air accent bar — amber on the couch (broadcast-lineup feel).
+              borderLeftColor: IS_TV_LAYOUT ? colors.theme500 : colors.theme200,
+            },
+            styles.textContainer,
+          ]}
+        >
+          <View style={styles.titleRow}>
+            {IS_TV_LAYOUT && channelNo != null && (
+              <View style={[styles.chBadge, { borderColor: colors.theme500 }]}>
+                <Typography style={styles.chText} color={colors.theme500} fontWeight="ExtraBold">
+                  {`CH ${String(channelNo).padStart(2, "0")}`}
+                </Typography>
+              </View>
+            )}
+            {IS_TV_LAYOUT && (
+              <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
+            )}
+            <Typography
+              style={[styles.text, IS_TV_LAYOUT && styles.textTV]}
+              color={colors.theme950}
+              fontSize="sizeXL"
+              fontWeight="ExtraBold"
+            >
+              {title}
+            </Typography>
+          </View>
         </View>
+        {isLinkVisible && (
+          <Link asChild href={{ pathname: link.route, params: { backend } }}>
+            <Button text={link.text} contrast="high" />
+          </Link>
+        )}
       </View>
-      {isLinkVisible && (
-        <Link asChild href={{ pathname: link.route, params: { backend } }}>
-          <Button text={link.text} contrast="high" />
-        </Link>
-      )}
     </View>
   );
 };

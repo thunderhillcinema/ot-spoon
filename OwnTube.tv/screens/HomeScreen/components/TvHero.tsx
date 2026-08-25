@@ -20,11 +20,21 @@ export const TvHero = ({
   backend,
   compact,
   kicker = "NOW SHOWING",
+  imageUrl,
+  title,
+  subtitle,
+  onPress,
 }: {
   video?: GetVideosVideo;
   backend?: string;
   compact?: boolean;
   kicker?: string;
+  // Generic mode (playlists/channels/categories): supply a backdrop + labels
+  // instead of a video.
+  imageUrl?: string;
+  title?: string;
+  subtitle?: string;
+  onPress?: () => void;
 }) => {
   const { colors } = useTheme();
   const { height } = useWindowDimensions();
@@ -32,13 +42,21 @@ export const TvHero = ({
 
   const [heroWidth, setHeroWidth] = useState(0);
 
-  if (!video) return null;
+  const uri = imageUrl ?? video?.previewPath;
+  const displayTitle = title ?? video?.name;
+  const displaySubtitle = subtitle ?? video?.channel?.displayName;
+
+  if (!uri && !displayTitle) return null;
 
   const heroHeight = compact ? Math.min(Math.round(height * 0.62), 560) : Math.min(Math.round(height * 0.52), 480);
-  const source = video.previewPath ? { uri: video.previewPath } : undefined;
+  const source = uri ? { uri } : undefined;
+
+  const handlePress =
+    onPress ??
+    (video ? () => router.navigate({ pathname: `/${ROUTES.VIDEO}`, params: { id: video.uuid, backend } }) : undefined);
 
   return (
-    <Pressable onPress={() => router.navigate({ pathname: `/${ROUTES.VIDEO}`, params: { id: video.uuid, backend } })}>
+    <Pressable onPress={handlePress}>
       <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
         <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
         {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={0.4} />}
@@ -57,11 +75,13 @@ export const TvHero = ({
             fontWeight="ExtraBold"
             numberOfLines={2}
           >
-            {video.name}
+            {displayTitle}
           </Typography>
-          <Typography color={colors.theme800} fontWeight="Medium" numberOfLines={1}>
-            {video.channel?.displayName}
-          </Typography>
+          {!!displaySubtitle && (
+            <Typography color={colors.theme800} fontWeight="Medium" numberOfLines={1}>
+              {displaySubtitle}
+            </Typography>
+          )}
         </View>
       </View>
     </Pressable>

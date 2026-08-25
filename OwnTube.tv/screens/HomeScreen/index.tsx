@@ -98,18 +98,16 @@ export const HomeScreen = () => {
     return [
       {
         title: t("liveStreams"),
+        hero: liveVideosData?.[0] ? (
+          <TvHero video={liveVideosData[0]} backend={backend} compact kicker={t("liveStreams")} />
+        ) : undefined,
         renderItem: () => (
-          <>
-            {IS_TV_LAYOUT && liveVideosData?.[0] && (
-              <TvHero video={liveVideosData[0]} backend={backend} compact kicker={t("liveStreams")} />
-            )}
-            <VideoGrid
-              scrollable={showHorizontalScrollableLists}
-              isTVActionCardHidden={true}
-              isHeaderHidden
-              data={liveVideosData}
-            />
-          </>
+          <VideoGrid
+            scrollable={showHorizontalScrollableLists}
+            isTVActionCardHidden={true}
+            isHeaderHidden
+            data={liveVideosData}
+          />
         ),
         data: ["dataItemPlaceholder"],
         isVisible: Number(liveVideosData?.length) > 0,
@@ -124,23 +122,21 @@ export const HomeScreen = () => {
       {
         title: isMobile ? t("recentlyWatchedAbbr") : t("recentlyWatched"),
         link: { text: t("viewHistory"), route: `/${ROUTES.HISTORY}` },
+        hero: historyData?.[0] ? (
+          <TvHero video={historyData[0]} backend={backend} compact kicker={t("recentlyWatched")} />
+        ) : undefined,
         renderItem: () => (
-          <>
-            {IS_TV_LAYOUT && historyData?.[0] && (
-              <TvHero video={historyData[0]} backend={backend} compact kicker={t("recentlyWatched")} />
-            )}
-            <VideoGrid
-              scrollable={showHorizontalScrollableLists}
-              link={
-                Platform.isTV
-                  ? { text: t("viewHistory"), href: { pathname: `/${ROUTES.HISTORY}`, params: { backend } } }
-                  : undefined
-              }
-              isHeaderHidden
-              data={historyData}
-              variant="history"
-            />
-          </>
+          <VideoGrid
+            scrollable={showHorizontalScrollableLists}
+            link={
+              Platform.isTV
+                ? { text: t("viewHistory"), href: { pathname: `/${ROUTES.HISTORY}`, params: { backend } } }
+                : undefined
+            }
+            isHeaderHidden
+            data={historyData}
+            variant="history"
+          />
         ),
         data: ["dataItemPlaceholder"],
         isVisible: historyData.length > 0,
@@ -148,6 +144,18 @@ export const HomeScreen = () => {
       {
         title: t("playlistsPageTitle"),
         link: { text: t("allPlaylists"), route: `/${ROUTES.PLAYLISTS}` },
+        hero: playlistsData?.data?.[0] ? (
+          <TvHero
+            compact
+            kicker={t("playlistsPageTitle")}
+            title={playlistsData.data[0].displayName}
+            imageUrl={
+              playlistsData.data[0].thumbnailPath
+                ? `https://${backend}${playlistsData.data[0].thumbnailPath}`
+                : undefined
+            }
+          />
+        ) : undefined,
         renderItem: ({ item }: { item: VideoPlaylist }) => (
           <PlaylistVideosView location="home" key={item.id} title={item.displayName} id={item.id} />
         ),
@@ -157,6 +165,7 @@ export const HomeScreen = () => {
       {
         title: t("channels"),
         link: { text: t("allChannels"), route: `/${ROUTES.CHANNELS}` },
+        hero: channels?.[0] ? <TvHero compact kicker={t("channels")} title={channels[0].displayName} /> : undefined,
         renderItem: ({ item }: { item: VideoChannel }) => <ChannelView key={item.id} channel={item} />,
         data: channels || [],
         isVisible: !currentInstanceConfig?.customizations?.homeHideChannelsOverview && !!channels?.length,
@@ -164,6 +173,7 @@ export const HomeScreen = () => {
       {
         title: t("categories"),
         link: { text: t("allCategories"), route: `/${ROUTES.CATEGORIES}` },
+        hero: categories?.[0] ? <TvHero compact kicker={t("categories")} title={categories[0].name} /> : undefined,
         renderItem: ({ item }: { item: { name: string; id: number } }) => (
           <CategoryView category={item} key={item.id} />
         ),
@@ -224,7 +234,7 @@ export const HomeScreen = () => {
           // @ts-expect-error the sections do not change in runtime so we can be sure the typings match
           sections={sections}
           disableVirtualization
-          stickySectionHeadersEnabled
+          stickySectionHeadersEnabled={!IS_TV_LAYOUT}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={IS_TV_LAYOUT ? <TvHero video={heroVideo} backend={backend} /> : undefined}
           ListFooterComponent={<InfoFooter />}
@@ -236,6 +246,7 @@ export const HomeScreen = () => {
             <SectionHeader
               title={section.title}
               link={section.link}
+              hero={"hero" in section ? section.hero : undefined}
               channelNo={sections.findIndex((s) => s.title === section.title) + 1}
             />
           )}
