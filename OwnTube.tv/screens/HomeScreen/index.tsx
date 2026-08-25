@@ -16,7 +16,7 @@ import { Platform, RefreshControl, SectionList, StyleSheet, View } from "react-n
 import { useTranslation } from "react-i18next";
 import { LatestVideosView, SectionHeader, TvHero } from "./components";
 import { IS_TV_LAYOUT } from "../../utils/tvPreview";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { RootStackParams } from "../../app/_layout";
 import { ChannelView } from "../../components";
 import { PlaylistVideosView } from "../Playlists/components";
@@ -32,6 +32,7 @@ export const HomeScreen = () => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { backend } = useLocalSearchParams<RootStackParams[ROUTES.INDEX]>();
+  const router = useRouter();
   const { viewHistory } = useViewHistory({ backendToFilter: backend });
   const { currentInstanceConfig } = useAppConfigContext();
   const { top } = usePageContentTopPadding();
@@ -156,6 +157,9 @@ export const HomeScreen = () => {
                 kicker={t("playlistsPageTitle")}
                 title={item.displayName}
                 imageUrl={item.thumbnailPath ? `https://${backend}${item.thumbnailPath}` : undefined}
+                onPress={() =>
+                  router.navigate({ pathname: `/${ROUTES.PLAYLIST}`, params: { backend, playlist: item.id } })
+                }
               />
             )}
             <PlaylistVideosView location="home" key={item.id} title={item.displayName} id={item.id} />
@@ -169,7 +173,16 @@ export const HomeScreen = () => {
         link: { text: t("allChannels"), route: `/${ROUTES.CHANNELS}` },
         renderItem: ({ item, index }: { item: VideoChannel; index: number }) => (
           <>
-            {IS_TV_LAYOUT && index === 0 && <TvHero compact kicker={t("channels")} title={item.displayName} />}
+            {IS_TV_LAYOUT && index === 0 && (
+              <TvHero
+                compact
+                kicker={t("channels")}
+                title={item.displayName}
+                onPress={() =>
+                  router.navigate({ pathname: `/${ROUTES.CHANNEL}`, params: { backend, channel: item.name } })
+                }
+              />
+            )}
             <ChannelView key={item.id} channel={item} />
           </>
         ),
@@ -181,7 +194,16 @@ export const HomeScreen = () => {
         link: { text: t("allCategories"), route: `/${ROUTES.CATEGORIES}` },
         renderItem: ({ item, index }: { item: { name: string; id: number }; index: number }) => (
           <>
-            {IS_TV_LAYOUT && index === 0 && <TvHero compact kicker={t("categories")} title={item.name} />}
+            {IS_TV_LAYOUT && index === 0 && (
+              <TvHero
+                compact
+                kicker={t("categories")}
+                title={item.name}
+                onPress={() =>
+                  router.navigate({ pathname: `/${ROUTES.CATEGORY}`, params: { backend, category: item.id } })
+                }
+              />
+            )}
             <CategoryView category={item} key={item.id} />
           </>
         ),
@@ -201,6 +223,7 @@ export const HomeScreen = () => {
     heroVideo,
     showHorizontalScrollableLists,
     isMobile,
+    router,
   ]);
 
   const [refreshing, setRefreshing] = useState(false);
