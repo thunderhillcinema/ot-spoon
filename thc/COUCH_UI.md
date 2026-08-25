@@ -53,6 +53,11 @@ IS_TV_LAYOUT = Platform.isTV || process.env.EXPO_PUBLIC_TV_PREVIEW === "1"
   and CRT channel wall.
 - **No metadata clutter** — the view count and the date line under each tile are
   hidden on the couch (`VideoItemFooter.tsx`).
+- **Hero brightens on hover** — the hero image rests at 0.82 opacity and animates
+  to full over 260ms on hover (`Animated.Value`, `TvHero.tsx`).
+- **Grid toggle is respected** — the couch forces horizontal rows for the home
+  rails, but a page with an explicit grid/list toggle (playlist/category) keeps a
+  real wrapping grid via `forceGrid` (`VideoGrid.tsx` → `VideoGridContent.tsx`).
 
 ## Deliberately NOT done (and why)
 
