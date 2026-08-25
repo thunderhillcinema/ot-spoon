@@ -9,6 +9,8 @@ import { getHumanReadableDuration } from "../utils";
 import { useTranslation } from "react-i18next";
 import { useTimeLeftUpdates } from "../hooks";
 import { Image } from "expo-image";
+import { CrtScreen } from "./helpers";
+import { IS_TV_LAYOUT } from "../utils/tvPreview";
 
 interface VideoThumbnailProps {
   video: GetVideosVideo & Partial<ViewHistoryEntry>;
@@ -49,6 +51,9 @@ export const VideoThumbnail: FC<VideoThumbnailProps> = ({ video, backend, timest
         style={[styles.videoImage, { ...imageDimensions }]}
         onError={() => setIsError(true)}
       />
+      {IS_TV_LAYOUT && imageDimensions.width > 0 && (
+        <CrtScreen width={imageDimensions.width} height={imageDimensions.height} />
+      )}
       {!!percentageWatched && percentageWatched > 0 && !video.isLive && (
         <View style={[styles.progressContainer, { backgroundColor: colors.white25 }]}>
           <View style={{ backgroundColor: colors.theme500, width: `${percentageWatched}%`, height: spacing.xs }} />

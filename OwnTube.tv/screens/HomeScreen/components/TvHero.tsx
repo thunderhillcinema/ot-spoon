@@ -56,7 +56,7 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
 };
 
 const styles = StyleSheet.create({
-  content: { bottom: 0, gap: spacing.xs, left: 0, padding: spacing.xl, position: "absolute", right: 0 },
+  content: { bottom: 0, gap: spacing.xs, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
   hero: { justifyContent: "flex-end", marginBottom: spacing.lg, overflow: "hidden", width: "100%" },
   kicker: { letterSpacing: 3 },
   title: { lineHeight: 40, maxWidth: 760 },

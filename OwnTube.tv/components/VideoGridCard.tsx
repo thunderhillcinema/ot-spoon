@@ -10,7 +10,7 @@ import { useTheme } from "@react-navigation/native";
 import { ChannelLink } from "./ChannelLink";
 import { forwardRef, useMemo, useState } from "react";
 import TVFocusGuideHelper from "./helpers/TVFocusGuideHelper";
-import { FocusGuide, CrtScreen } from "./helpers";
+import { FocusGuide } from "./helpers";
 import { VideoItemFooter } from "./VideoItemFooter";
 import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../utils/tvPreview";
 import { LinearGradient } from "expo-linear-gradient";
@@ -130,9 +130,6 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
               timestamp={timestamp}
               backend={backend}
             />
-            {IS_TV_LAYOUT && containerWidth > 0 && (
-              <CrtScreen width={containerWidth} height={containerWidth * (9 / 16)} />
-            )}
           </Pressable>
         </Link>
         <TVFocusGuideHelper focusable={false} style={styles.textContainer}>

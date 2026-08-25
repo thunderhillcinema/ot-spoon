@@ -31,7 +31,6 @@ export const CrtScreen = ({ width, height, intensity = 1 }: { width: number; hei
         height: h,
         borderRadius: 8,
         overflow: "hidden",
-        zIndex: 4,
       }}
     >
       <Svg width={w} height={h}>
