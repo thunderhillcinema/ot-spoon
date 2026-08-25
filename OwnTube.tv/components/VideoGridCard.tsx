@@ -91,7 +91,7 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
           asChild
           style={thumbnailLinkStyles}
         >
-          <Pressable tabIndex={-1} onHoverIn={toggleHovered} onHoverOut={toggleHovered}>
+          <Pressable tabIndex={-1} onHoverIn={handleHoverIn} onHoverOut={handleHoverOut}>
             {focused && <FocusGuide height={containerWidth * (9 / 16)} width={containerWidth} />}
             <VideoThumbnail
               imageDimensions={{ width: containerWidth, height: containerWidth * (9 / 16) }}
