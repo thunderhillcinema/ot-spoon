@@ -14,7 +14,7 @@ import { spacing } from "../../theme";
 import { ROUTES } from "../../types";
 import { Platform, RefreshControl, SectionList, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { LatestVideosView, SectionHeader, TvHero } from "./components";
+import { CategoryHero, ChannelHero, LatestVideosView, SectionHeader, TvHero } from "./components";
 import { IS_TV_LAYOUT } from "../../utils/tvPreview";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { RootStackParams } from "../../app/_layout";
@@ -174,10 +174,9 @@ export const HomeScreen = () => {
         renderItem: ({ item, index }: { item: VideoChannel; index: number }) => (
           <>
             {IS_TV_LAYOUT && index === 0 && (
-              <TvHero
-                compact
+              <ChannelHero
+                channel={item}
                 kicker={t("channels")}
-                title={item.displayName}
                 onPress={() =>
                   router.navigate({ pathname: `/${ROUTES.CHANNEL}`, params: { backend, channel: item.name } })
                 }
@@ -195,10 +194,9 @@ export const HomeScreen = () => {
         renderItem: ({ item, index }: { item: { name: string; id: number }; index: number }) => (
           <>
             {IS_TV_LAYOUT && index === 0 && (
-              <TvHero
-                compact
+              <CategoryHero
+                category={item}
                 kicker={t("categories")}
-                title={item.name}
                 onPress={() =>
                   router.navigate({ pathname: `/${ROUTES.CATEGORY}`, params: { backend, category: item.id } })
                 }
