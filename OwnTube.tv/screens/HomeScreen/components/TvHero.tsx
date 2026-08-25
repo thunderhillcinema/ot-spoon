@@ -34,9 +34,12 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
         {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
         <View style={styles.content}>
-          <Typography style={styles.kicker} color={colors.theme500} fontWeight="ExtraBold">
-            NOW SHOWING
-          </Typography>
+          <View style={styles.kickerRow}>
+            <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
+            <Typography style={styles.kicker} color={colors.theme500} fontWeight="ExtraBold">
+              NOW SHOWING
+            </Typography>
+          </View>
           <Typography
             style={styles.title}
             color={colors.theme900}
@@ -56,8 +59,17 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
 };
 
 const styles = StyleSheet.create({
-  content: { bottom: 0, gap: spacing.xs, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
+  content: { bottom: 0, gap: spacing.sm, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
   hero: { justifyContent: "flex-end", marginBottom: spacing.lg, overflow: "hidden", width: "100%" },
   kicker: { letterSpacing: 3 },
+  kickerRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
+  tally: {
+    borderRadius: 5,
+    height: 10,
+    shadowOffset: { height: 0, width: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 6,
+    width: 10,
+  },
   title: { lineHeight: 40, maxWidth: 760 },
 });

@@ -220,7 +220,13 @@ export const HomeScreen = () => {
             ...styles.paddingContainer,
             flex: Platform.isTV ? 0 : 1,
           }}
-          renderSectionHeader={({ section: { title, link } }) => <SectionHeader title={title} link={link} />}
+          renderSectionHeader={({ section }) => (
+            <SectionHeader
+              title={section.title}
+              link={section.link}
+              channelNo={sections.findIndex((s) => s.title === section.title) + 2}
+            />
+          )}
         />
       </View>
     </View>

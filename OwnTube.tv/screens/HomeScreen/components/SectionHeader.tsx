@@ -9,9 +9,10 @@ import { IS_TV_LAYOUT } from "../../../utils/tvPreview";
 interface SectionHeaderProps {
   title: string;
   link?: { route: string; text: string };
+  channelNo?: number;
 }
 
-export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
+export const SectionHeader = ({ title, link, channelNo }: SectionHeaderProps) => {
   const { colors } = useTheme();
   const { backend } = useLocalSearchParams();
   const { isMobile } = useBreakpoints();
@@ -40,14 +41,26 @@ export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
           styles.textContainer,
         ]}
       >
-        <Typography
-          style={[styles.text, IS_TV_LAYOUT && styles.textTV]}
-          color={colors.theme950}
-          fontSize="sizeXL"
-          fontWeight="ExtraBold"
-        >
-          {title}
-        </Typography>
+        <View style={styles.titleRow}>
+          {IS_TV_LAYOUT && channelNo != null && (
+            <View style={[styles.chBadge, { borderColor: colors.theme500 }]}>
+              <Typography style={styles.chText} color={colors.theme500} fontWeight="ExtraBold">
+                {`CH ${String(channelNo).padStart(2, "0")}`}
+              </Typography>
+            </View>
+          )}
+          {IS_TV_LAYOUT && (
+            <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
+          )}
+          <Typography
+            style={[styles.text, IS_TV_LAYOUT && styles.textTV]}
+            color={colors.theme950}
+            fontSize="sizeXL"
+            fontWeight="ExtraBold"
+          >
+            {title}
+          </Typography>
+        </View>
       </View>
       {isLinkVisible && (
         <Link asChild href={{ pathname: link.route, params: { backend } }}>
@@ -59,6 +72,8 @@ export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
 };
 
 const styles = StyleSheet.create({
+  chBadge: { borderRadius: 6, borderWidth: 1.5, paddingHorizontal: spacing.sm, paddingVertical: 2 },
+  chText: { letterSpacing: 2 },
   container: {
     alignItems: "center",
     flexDirection: "row",
@@ -67,6 +82,14 @@ const styles = StyleSheet.create({
     rowGap: spacing.md,
     width: "100%",
   },
+  tally: {
+    borderRadius: 4,
+    height: 8,
+    shadowOffset: { height: 0, width: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 6,
+    width: 8,
+  },
   text: { lineHeight: 36 },
   textContainer: {
     borderLeftWidth: 4,
@@ -74,4 +97,5 @@ const styles = StyleSheet.create({
   },
   // On-air broadcast label: uppercase, wide tracking.
   textTV: { letterSpacing: 3, textTransform: "uppercase" },
+  titleRow: { alignItems: "center", flexDirection: "row", gap: spacing.md },
 });
