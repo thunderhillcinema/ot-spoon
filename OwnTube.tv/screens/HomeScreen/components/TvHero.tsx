@@ -1,6 +1,8 @@
-import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
-import { useState } from "react";
+import { Animated, Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
 import { Image } from "expo-image";
+
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
@@ -43,6 +45,16 @@ export const TvHero = ({
   const [heroWidth, setHeroWidth] = useState(0);
   const [hovered, setHovered] = useState(false);
 
+  // Smooth brightness fade on hover (0.82 → 1).
+  const brightness = useRef(new Animated.Value(0.82)).current;
+  useEffect(() => {
+    Animated.timing(brightness, {
+      toValue: hovered ? 1 : 0.82,
+      duration: 260,
+      useNativeDriver: true,
+    }).start();
+  }, [hovered, brightness]);
+
   const uri = imageUrl ?? video?.previewPath;
   const displayTitle = title ?? video?.name;
   const displaySubtitle = subtitle ?? video?.channel?.displayName;
@@ -59,9 +71,9 @@ export const TvHero = ({
   return (
     <Pressable onPress={handlePress} onHoverIn={() => setHovered(true)} onHoverOut={() => setHovered(false)}>
       <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
-        <Image
+        <AnimatedImage
           source={source}
-          style={[StyleSheet.absoluteFill, { opacity: hovered ? 1 : 0.82 }]}
+          style={[StyleSheet.absoluteFill, { opacity: brightness }]}
           contentFit="cover"
           transition={200}
         />
