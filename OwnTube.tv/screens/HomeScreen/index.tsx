@@ -14,7 +14,8 @@ import { spacing } from "../../theme";
 import { ROUTES } from "../../types";
 import { Platform, RefreshControl, SectionList, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { LatestVideosView, SectionHeader } from "./components";
+import { LatestVideosView, SectionHeader, TvHero } from "./components";
+import { IS_TV_LAYOUT } from "../../utils/tvPreview";
 import { useLocalSearchParams } from "expo-router";
 import { RootStackParams } from "../../app/_layout";
 import { ChannelView } from "../../components";
@@ -57,6 +58,14 @@ export const HomeScreen = () => {
     params: { isLive: true, count: 4 },
     refetchInterval: isFocused ? LIVE_STREAM_LIST_REFETCH_INTERVAL : 0,
   });
+
+  // Featured video for the couch hero (latest published).
+  const { data: heroVideos } = useGetVideosQuery({
+    uniqueQueryKey: QUERY_KEYS.videos,
+    params: { count: 1, sort: "-publishedAt" },
+    enabled: IS_TV_LAYOUT,
+  });
+  const heroVideo = heroVideos?.data?.[0];
 
   const liveVideoIds = useMemo(() => {
     return Array.from(
@@ -205,6 +214,7 @@ export const HomeScreen = () => {
           disableVirtualization
           stickySectionHeadersEnabled
           showsVerticalScrollIndicator={false}
+          ListHeaderComponent={IS_TV_LAYOUT ? <TvHero video={heroVideo} backend={backend} /> : undefined}
           ListFooterComponent={<InfoFooter />}
           style={{
             ...styles.paddingContainer,
