@@ -4,32 +4,43 @@ import { SvgProps } from "react-native-svg/src/elements/Svg";
 import { StyleSheet, View } from "react-native";
 import { useMemo } from "react";
 
-const BORDER_WIDTH = 8;
-const BORDER_OFFSET = 4;
+// THC on-air focus GLOW (not a border): concentric amber strokes that fade
+// outward approximate a soft phosphor glow around the focused CRT screen —
+// portable (no SVG blur filter), renders on web + native.
+const GLOW_LAYERS = [
+  { spread: 0, strokeWidth: 3, opacity: 0.85 },
+  { spread: 4, strokeWidth: 6, opacity: 0.45 },
+  { spread: 9, strokeWidth: 10, opacity: 0.25 },
+  { spread: 15, strokeWidth: 14, opacity: 0.13 },
+  { spread: 22, strokeWidth: 18, opacity: 0.06 },
+];
+const PAD = 34; // room for the outermost, thickest layer
 
 export const FocusGuide = ({ width, height }: SvgProps) => {
   const { colors } = useTheme();
-  const calculatedDimensions = useMemo(() => {
-    return {
-      width: Number(width) + BORDER_WIDTH * 2 + BORDER_OFFSET * 2,
-      height: Number(height) + BORDER_WIDTH * 2 + BORDER_OFFSET * 2,
-    };
+
+  const dims = useMemo(() => {
+    return { w: Number(width), h: Number(height) };
   }, [width, height]);
 
   return (
-    <View style={styles.container}>
-      <Svg width={calculatedDimensions.width} height={calculatedDimensions.height}>
-        <Rect
-          x={String(BORDER_WIDTH / 2)}
-          y={String(BORDER_WIDTH / 2)}
-          width={Number(calculatedDimensions.width) - BORDER_WIDTH}
-          height={Number(calculatedDimensions.height) - BORDER_WIDTH}
-          rx={String(BORDER_WIDTH * 2)}
-          ry={String(BORDER_WIDTH * 2)}
-          fill="none"
-          stroke={colors.theme500}
-          strokeWidth={String(BORDER_WIDTH)}
-        />
+    <View style={styles.container} pointerEvents="none">
+      <Svg width={dims.w + PAD * 2} height={dims.h + PAD * 2}>
+        {GLOW_LAYERS.map((layer, i) => (
+          <Rect
+            key={i}
+            x={PAD - layer.spread}
+            y={PAD - layer.spread}
+            width={dims.w + layer.spread * 2}
+            height={dims.h + layer.spread * 2}
+            rx={12 + layer.spread}
+            ry={12 + layer.spread}
+            fill="none"
+            stroke={colors.theme500}
+            strokeWidth={layer.strokeWidth}
+            opacity={layer.opacity}
+          />
+        ))}
       </Svg>
     </View>
   );
@@ -37,9 +48,9 @@ export const FocusGuide = ({ width, height }: SvgProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    left: -(BORDER_WIDTH + BORDER_OFFSET),
+    left: -PAD,
     position: "absolute",
-    top: -(BORDER_WIDTH + BORDER_OFFSET),
+    top: -PAD,
     zIndex: -1,
   },
 });
