@@ -190,11 +190,18 @@ export const TvHero = ({
 const styles = StyleSheet.create({
   border: { borderWidth: 2, bottom: 0, left: 0, position: "absolute", right: 0, top: 0, zIndex: 1 },
   content: { bottom: 0, gap: spacing.sm, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
+  // Inset on every side by ~the glow radius (matching the rows' 44px padding) so
+  // the outward FocusGuide bloom has the SAME room to expand as it does around the
+  // thumbnails, and isn't clipped by the sticky marquee above, the sidebar to the
+  // left, or the screen edge. alignSelf:"stretch" (not width:100%) lets the
+  // horizontal margins actually inset it.
   hero: {
+    alignSelf: "stretch",
     justifyContent: "flex-end",
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xxl,
+    marginHorizontal: spacing.xxl,
+    marginTop: spacing.xxl,
     overflow: "hidden",
-    width: "100%",
   },
   kicker: { letterSpacing: 3 },
   kickerRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
