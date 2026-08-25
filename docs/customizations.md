@@ -56,6 +56,11 @@ views by setting it to "1" or "true" (omit for default behavior)
 `EXPO_PUBLIC_HIDE_GIT_DETAILS`: hide the build info section about git commit and author by setting it to "1" or "true"
 (omit for default behavior)
 
+`EXPO_PUBLIC_TV_ON_AIR_THEME`: enable the "on-air" Couch UI — a streamlined broadcast-style 10-foot restyle of the TV
+layout (channel marquees, section heroes, CRT-styled thumbnails, phosphor focus glow) — by setting it to "1" or "true"
+(omit for the default vanilla TV layout). Applies only on TV surfaces (tvOS / Android TV); a web/mobile build keeps its
+normal layout regardless. See thc/COUCH_UI.md for the full treatment list.
+
 `EXPO_PUBLIC_FOOTER_LOGO`: custom footer logo instead of OwnTube.tv logo
 
 `EXPO_PUBLIC_PROVIDER_LEGAL_ENTITY`: the legal company name used in the privacy policy section

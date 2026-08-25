@@ -5,20 +5,31 @@ A restyle of OwnTube's TV layout into a broadcast / on-air aesthetic, meant to b
 10-foot experience than vanilla. Everything here is additive and gated, so it
 never touches the mobile/desktop faces.
 
-## The one mechanism: `IS_TV_LAYOUT`
+## The one mechanism: `IS_TV_LAYOUT` (opt-in)
 
-`OwnTube.tv/utils/tvPreview.ts` exports the gate every couch treatment keys on:
+`OwnTube.tv/utils/tvPreview.ts` exports the gate every couch treatment keys on. It
+is an **opt-in** — the couch look never turns on unless an instance asked for it:
 
 ```
-IS_TV_LAYOUT = Platform.isTV || process.env.EXPO_PUBLIC_TV_PREVIEW === "1"
+IS_TV_LAYOUT = (Platform.isTV || TV_PREVIEW) && (TV_ON_AIR_THEME || TV_PREVIEW)
 ```
 
-- On a **real TV build** (`EXPO_TV=1`) it is true via `Platform.isTV`.
-- In the **web preview** (`EXPO_PUBLIC_TV_PREVIEW=1 npm run web`) it is true too, so
-  the whole couch design renders in a browser for fast iteration — no native build
-  needed. `IS_TV_PREVIEW_WEB` additionally drives focus from hover (no D-pad on web).
+- **Opt-in flag:** a branded app sets `EXPO_PUBLIC_TV_ON_AIR_THEME=1` in its
+  `.customizations` (like any other env-var customization — see
+  `docs/customizations.md`). This is the public adoption surface: any PeerTube
+  instance's branded app flips it on to get the streamlined on-air look.
+- A **vanilla TV build** (flag unset) is therefore **unchanged upstream** — no
+  couch styling. Only an opted-in build (e.g. the THC build) gets it.
+- Couch is a **10-foot surface only**: it applies on tvOS / Android TV (or the web
+  preview). An opted-in _web/mobile_ build keeps its normal layout.
+- In the **web preview** (`EXPO_PUBLIC_TV_PREVIEW=1 npm run web`) the gate is true
+  and the preview _implies_ the on-air theme, so the whole couch design renders in
+  a browser for fast iteration — no native build, no extra flag. `IS_TV_PREVIEW_WEB`
+  additionally drives focus from hover (no D-pad on web).
 - The native focus ENGINE still keys on `Platform.isTV` — do not route D-pad focus
-  through the preview flag. `IS_TV_LAYOUT` gates VISUAL treatments only.
+  through these flags. `IS_TV_LAYOUT` gates VISUAL treatments only.
+- The opt-in semantics are pinned by `utils/tvPreview.test.ts` (pure
+  `computeIsTvLayout` / `computeOnAirTheme` derivations).
 
 ## What the couch layout does (all gated on `IS_TV_LAYOUT`)
 
@@ -82,12 +93,17 @@ EXPO_PUBLIC_TV_PREVIEW=1 EXPO_PUBLIC_APP_NAME="Thunderhill Cinema" EXPO_PUBLIC_U
 Then open localhost:8081 (tunnel it if the browser is on another host). For the
 real 10-foot build, see `thc/TV_SIMULATOR.md` (cloud CI → simulator).
 
-## Toward public availability
+## Public availability
 
-To make this adoptable by any instance, the couch treatments should become an
-**opt-in customization** (an `instanceConfigs.ts` flag, e.g. `tvOnAirTheme`)
-rather than always-on when `IS_TV_LAYOUT`, so an instance chooses the streamlined
-on-air look. Palette should read from the instance's own admin theme
-(`/api/v1/config` `theme.customization.primary_color`) so each instance colours
-its own frame — the client theme is static in `colors.ts` today. Both are small,
-well-bounded follow-ups.
+**Opt-in — done.** The couch treatments are gated behind the build-time
+`EXPO_PUBLIC_TV_ON_AIR_THEME` customization (above), matching how every branded
+app configures itself (`.customizations` env vars). A vanilla TV build is
+unchanged; an instance adopts the on-air look by setting the flag. This is the
+env-var mechanism the whole branded-app model already uses (one app = one
+distributor), so it slots straight into the `cust-app-template` `.customizations`
+file — no code fork required for adoption.
+
+**Remaining follow-up — per-instance palette.** The palette is still static in
+`colors.ts`. To let each instance colour its own frame, read the admin theme
+(`/api/v1/config` `theme.customization.primary_color`) and feed it into the
+amber-accent tokens. Small, well-bounded, not yet done.
