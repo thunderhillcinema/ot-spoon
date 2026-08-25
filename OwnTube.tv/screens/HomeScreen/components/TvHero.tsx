@@ -8,7 +8,7 @@ import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { Typography } from "../../../components";
 import { CrtScreen, FocusGuide } from "../../../components/helpers";
-import { spacing } from "../../../theme";
+import { borderRadius, spacing } from "../../../theme";
 import { GetVideosVideo } from "../../../api/models";
 import { ROUTES } from "../../../types";
 import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../../../utils/tvPreview";
@@ -198,7 +198,16 @@ export const TvHero = ({
 };
 
 const styles = StyleSheet.create({
-  border: { borderWidth: 2, bottom: 0, left: 0, position: "absolute", right: 0, top: 0, zIndex: 1 },
+  border: {
+    borderRadius: borderRadius.radiusMd,
+    borderWidth: 2,
+    bottom: 0,
+    left: 0,
+    position: "absolute",
+    right: 0,
+    top: 0,
+    zIndex: 1,
+  },
   content: { bottom: 0, gap: spacing.sm, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
   // Inset on every side by ~the glow radius (matching the rows' 44px padding) so
   // the outward FocusGuide bloom has the SAME room to expand as it does around the
@@ -213,6 +222,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xxl,
   },
   hero: {
+    borderRadius: borderRadius.radiusMd,
     justifyContent: "flex-end",
     overflow: "hidden",
     width: "100%",
