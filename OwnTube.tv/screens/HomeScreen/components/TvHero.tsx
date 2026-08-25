@@ -1,8 +1,6 @@
-import { Animated, Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
-import { useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
+import { useState } from "react";
 import { Image } from "expo-image";
-
-const AnimatedImage = Animated.createAnimatedComponent(Image);
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
@@ -61,23 +59,15 @@ export const TvHero = ({
   // preview there's no D-pad, so hover stands in. Mirrors VideoGridCard.
   const [active, setActive] = useState(false);
 
-  // One driver, 0 (neutral) → 1 (focused), fans out to every focus effect below.
-  const focus = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    Animated.timing(focus, {
-      toValue: active ? 1 : 0,
-      duration: 260,
-      useNativeDriver: true,
-    }).start();
-  }, [active, focus]);
-
-  // The picture "tunes in": brightens and zooms slightly WITHIN its frame (the
-  // hero clips via overflow:hidden, so nothing spills or shifts layout). The frame
-  // staying put is what lets the amber glow bloom OUTWARD around a stable anchor.
-  const imageBrightness = focus.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] });
-  const imageScale = focus.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] });
-  // Vignette recedes (darker → lighter) as the tube tunes in.
-  const vignetteOpacity = focus.interpolate({ inputRange: [0, 1], outputRange: [0.6, 0.12] });
+  // Snap focus (no animation) — matches the cards, which apply their focus style
+  // instantly. On focus the picture brightens and zooms slightly WITHIN its frame
+  // (the hero clips via overflow:hidden, so nothing spills or shifts layout); the
+  // frame staying put is what lets the amber glow bloom OUTWARD around it. The
+  // vignette lifts and the amber edge snaps in.
+  const imageBrightness = active ? 1 : 0.82;
+  const imageScale = active ? 1.05 : 1;
+  const vignetteOpacity = active ? 0.12 : 0.6;
+  const borderOpacity = active ? 1 : 0;
 
   const uri = imageUrl ?? video?.previewPath;
   const displayTitle = title ?? video?.name;
@@ -120,7 +110,7 @@ export const TvHero = ({
             edges. Lives outside the hero's overflow:hidden as a sibling. */}
         {IS_TV_LAYOUT && active && heroWidth > 0 && <FocusGuide width={heroWidth} height={heroHeight} />}
         <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
-          <AnimatedImage
+          <Image
             source={source}
             style={[StyleSheet.absoluteFill, { opacity: imageBrightness, transform: [{ scale: imageScale }] }]}
             contentFit="cover"
@@ -136,7 +126,7 @@ export const TvHero = ({
           {IS_TV_LAYOUT && (
             <>
               {/* Neutral vignette — darker at rest, recedes on focus. */}
-              <Animated.View style={[styles.overlayFill, { opacity: vignetteOpacity }]} pointerEvents="none">
+              <View style={[styles.overlayFill, { opacity: vignetteOpacity }]} pointerEvents="none">
                 <LinearGradient
                   colors={[VIGNETTE, TRANSPARENT] as const}
                   start={{ x: 0, y: 0 }}
@@ -161,10 +151,10 @@ export const TvHero = ({
                   end={{ x: 1, y: 0 }}
                   style={styles.vignetteRight}
                 />
-              </Animated.View>
+              </View>
               {/* Crisp amber border — the glow's innermost edge, on the tube itself. */}
-              <Animated.View
-                style={[styles.border, { borderColor: colors.theme500, opacity: focus }]}
+              <View
+                style={[styles.border, { borderColor: colors.theme500, opacity: borderOpacity }]}
                 pointerEvents="none"
               />
             </>
