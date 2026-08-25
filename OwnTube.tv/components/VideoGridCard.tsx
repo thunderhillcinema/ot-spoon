@@ -32,11 +32,13 @@ const CABINET = {
 };
 
 // Cabinet finishes (top-lit → shadowed bottom) so a rail reads as a shelf of
-// mismatched sets — graphite / walnut / onyx.
+// mismatched sets — graphite / walnut / onyx. The bottom stops stay clearly
+// ABOVE the near-black room (#0B0D0E) so the whole cabinet reads as a solid
+// lighter block, not a gradient that fades into the background.
 const CABINET_MODELS: readonly (readonly [string, string, string])[] = [
-  ["#33363A", "#1E2124", "#0C0E10"],
-  ["#3A2C20", "#241A12", "#120C08"],
-  ["#2A2C2E", "#141618", "#050607"],
+  ["#3B3E42", "#292C30", "#191C1F"],
+  ["#463522", "#31251A", "#201811"],
+  ["#313337", "#212327", "#15171A"],
 ];
 
 export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, backend }, ref) => {
@@ -178,7 +180,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: spacing.sm,
     overflow: "visible",
-    padding: spacing.sm,
+    padding: spacing.md,
     paddingBottom: spacing.md,
     shadowColor: CABINET.shadow,
     shadowOffset: { height: 14, width: 0 },
