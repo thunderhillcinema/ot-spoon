@@ -16,8 +16,10 @@ import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../../../utils/tvPreview";
 // On-air scrim — near-black fading up/right off the backdrop, for legibility.
 const SCRIM = ["rgba(11,13,14,0.96)", "rgba(11,13,14,0.55)", "rgba(11,13,14,0)"] as const;
 
-// Idle colour of the always-present focus frame (lit amber when active).
-const IDLE_FRAME = "transparent";
+// The transparent stop the inward focus glow fades to.
+const TRANSPARENT = "transparent";
+// How far the inward focus glow reaches from each edge.
+const GLOW_THICKNESS = 48;
 
 // TvHero — the featured spotlight at the top of the couch home. Big backdrop +
 // on-air "NOW SHOWING" kicker + title + channel. Clicking (or pressing SELECT on
@@ -91,19 +93,11 @@ export const TvHero = ({
     if (IS_TV_PREVIEW_WEB) setActive(false);
   };
 
-  // On-air focus cue: an amber channel-frame around the tuned-in hero (clearer on
-  // a remote than the brightness lift alone). TV/preview only. The border is
-  // always present (transparent when idle) so lighting it up never shifts layout.
-  const focusFrame =
-    IS_TV_LAYOUT && active
-      ? {
-          borderColor: colors.theme500,
-          shadowColor: colors.theme500,
-          shadowOffset: { height: 0, width: 0 },
-          shadowOpacity: 0.6,
-          shadowRadius: 24,
-        }
-      : null;
+  // On-air focus cue: an INWARD amber glow — the tube's own edges lighting up. The
+  // hero is full-bleed, so an outward glow (as on the small cards) would clip at
+  // the screen edge; an inward glow is the analog that actually reads here, in the
+  // same amber phosphor language. TV/preview only.
+  const showGlow = IS_TV_LAYOUT && active;
 
   return (
     <Pressable
@@ -114,10 +108,7 @@ export const TvHero = ({
       onHoverIn={handleHoverIn}
       onHoverOut={handleHoverOut}
     >
-      <View
-        style={[styles.hero, { height: heroHeight }, focusFrame]}
-        onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}
-      >
+      <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
         <AnimatedImage
           source={source}
           style={[StyleSheet.absoluteFill, { opacity: brightness }]}
@@ -126,6 +117,34 @@ export const TvHero = ({
         />
         {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={active ? 0.35 : 0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
+        {showGlow && (
+          <View style={styles.glow} pointerEvents="none">
+            <LinearGradient
+              colors={[colors.theme500, TRANSPARENT]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.glowTop}
+            />
+            <LinearGradient
+              colors={[TRANSPARENT, colors.theme500]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.glowBottom}
+            />
+            <LinearGradient
+              colors={[colors.theme500, TRANSPARENT]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.glowLeft}
+            />
+            <LinearGradient
+              colors={[TRANSPARENT, colors.theme500]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.glowRight}
+            />
+          </View>
+        )}
         <View style={styles.content}>
           <View style={styles.kickerRow}>
             <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
@@ -155,9 +174,12 @@ export const TvHero = ({
 
 const styles = StyleSheet.create({
   content: { bottom: 0, gap: spacing.sm, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
+  glow: { bottom: 0, left: 0, opacity: 0.5, position: "absolute", right: 0, top: 0, zIndex: 1 },
+  glowBottom: { bottom: 0, height: GLOW_THICKNESS, left: 0, position: "absolute", right: 0 },
+  glowLeft: { bottom: 0, left: 0, position: "absolute", top: 0, width: GLOW_THICKNESS },
+  glowRight: { bottom: 0, position: "absolute", right: 0, top: 0, width: GLOW_THICKNESS },
+  glowTop: { height: GLOW_THICKNESS, left: 0, position: "absolute", right: 0, top: 0 },
   hero: {
-    borderColor: IDLE_FRAME,
-    borderWidth: 3,
     justifyContent: "flex-end",
     marginBottom: spacing.lg,
     overflow: "hidden",

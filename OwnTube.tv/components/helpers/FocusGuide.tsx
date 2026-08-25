@@ -18,9 +18,9 @@ const PAD = 38; // room for the outermost, thickest layer (+ the base outset bel
 // The innermost ring is inflated by OUTSET so the glow sits just OUTSIDE the
 // thumbnail on every side. Without it the ring's rounded corner (rx 12) cuts
 // inside the thumbnail's squarer corner (~8), and the tile pokes past the glow.
-// At OUTSET 4 the inner ring is concentric with the thumbnail corner, one step
-// larger — so it fully surrounds it.
-const OUTSET = 4;
+// At OUTSET 3 the inner ring is concentric with the thumbnail corner, one step
+// larger — so it fully surrounds it without over-hugging.
+const OUTSET = 3;
 
 export const FocusGuide = ({ width, height }: SvgProps) => {
   const { colors } = useTheme();
