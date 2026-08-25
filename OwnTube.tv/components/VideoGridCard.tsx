@@ -13,6 +13,7 @@ import TVFocusGuideHelper from "./helpers/TVFocusGuideHelper";
 import { FocusGuide, CrtScreen } from "./helpers";
 import { VideoItemFooter } from "./VideoItemFooter";
 import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../utils/tvPreview";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface VideoGridCardProps {
   video: GetVideosVideo;
@@ -29,6 +30,14 @@ const CABINET = {
   screen: "#05070A",
   bezel: "#000000",
 };
+
+// Cabinet finishes (top-lit → shadowed bottom) so a rail reads as a shelf of
+// mismatched sets — graphite / walnut / onyx.
+const CABINET_MODELS: readonly (readonly [string, string, string])[] = [
+  ["#33363A", "#1E2124", "#0C0E10"],
+  ["#3A2C20", "#241A12", "#120C08"],
+  ["#2A2C2E", "#141618", "#050607"],
+];
 
 export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, backend }, ref) => {
   const { isDesktop } = useBreakpoints();
@@ -73,12 +82,29 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
     [colors],
   );
 
+  // Deterministic cabinet finish per video, so the shelf looks mismatched but stable.
+  const cabinetColors = useMemo(() => {
+    const key = video.uuid || video.name || "";
+    let sum = 0;
+    for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
+    return CABINET_MODELS[sum % CABINET_MODELS.length];
+  }, [video.uuid, video.name]);
+
   const handleTvNavigateToVideo = () => {
     router.navigate(linkHref);
   };
 
   return (
     <View style={[styles.container, IS_TV_LAYOUT && styles.cabinetTV, isTvFocused && tvFocusStyle]}>
+      {IS_TV_LAYOUT && (
+        <LinearGradient
+          colors={cabinetColors}
+          start={{ x: 0.3, y: 0 }}
+          end={{ x: 0.7, y: 1 }}
+          style={[StyleSheet.absoluteFill, styles.cabinetShell]}
+          pointerEvents="none"
+        />
+      )}
       <Pressable
         onFocus={IS_TV_LAYOUT ? () => setFocused(true) : null}
         onBlur={IS_TV_LAYOUT ? () => setFocused(false) : null}
@@ -142,6 +168,8 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
 VideoGridCard.displayName = "VideoGridCard";
 
 const styles = StyleSheet.create({
+  // The molded cabinet shell — a top-lit → shadowed gradient behind the whole card.
+  cabinetShell: { borderRadius: 16 },
   // TV cabinet: the whole item is a television — dark shell, rounded corners, a
   // top highlight edge, a bezel (padding) around the screen, and a lower front
   // panel (paddingBottom) that holds the title + detail. On-air dark, deliberate.
@@ -152,6 +180,7 @@ const styles = StyleSheet.create({
     borderTopColor: CABINET.highlight,
     borderWidth: 1,
     gap: spacing.sm,
+    overflow: "visible",
     padding: spacing.sm,
     paddingBottom: spacing.md,
     shadowColor: CABINET.shadow,
