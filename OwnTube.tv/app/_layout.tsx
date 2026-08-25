@@ -16,9 +16,9 @@ import Toast from "react-native-toast-message";
 import { AppDesktopHeader, FullScreenModal, InfoToast, Sidebar, ErrorBoundary, Loader } from "../components";
 import "../i18n";
 import { useTranslation } from "react-i18next";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { readFromAsyncStorage } from "../utils";
-import { colorSchemes } from "../theme";
+import { applyInstanceAccent, colorSchemes } from "../theme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
 import "../global.css";
@@ -28,7 +28,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-cont
 import { useAppStateDiagnostics, useBreakpoints } from "../hooks";
 import { DrawerHeaderProps } from "@react-navigation/drawer";
 import { SHAREABLE_ROUTE_MODAL_TITLES } from "../navigation/constants";
-import { GLOBAL_QUERY_STALE_TIME } from "../api";
+import { GLOBAL_QUERY_STALE_TIME, useGetInstanceServerConfigQuery } from "../api";
 import { useAuthSessionSync } from "../hooks/useAuthSessionSync";
 import { PostHogProvider, usePostHog } from "posthog-react-native";
 import { postHogInstance } from "../diagnostics";
@@ -40,7 +40,7 @@ export const OPEN_DRAWER_WIDTH = 272;
 
 const RootStack = () => {
   const { scheme } = useColorSchemeContext();
-  const theme = scheme === "dark" ? colorSchemes.dark : colorSchemes.light;
+  const baseTheme = scheme === "dark" ? colorSchemes.dark : colorSchemes.light;
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -50,6 +50,17 @@ const RootStack = () => {
 
   const breakpoints = useBreakpoints();
   const { backend } = useGlobalSearchParams<{ backend: string }>();
+
+  // Per-instance accent: on the on-air couch, recolor the amber accent (theme500)
+  // with the current PeerTube instance's own brand colour, so each instance
+  // colours its own frame. Cached/deduped query; falls back to amber when the
+  // server exposes no valid primaryColor. Off the couch (vanilla), unchanged.
+  const { data: serverConfig } = useGetInstanceServerConfigQuery({ hostname: backend });
+  const theme = useMemo(
+    () => (IS_TV_LAYOUT ? applyInstanceAccent(baseTheme, serverConfig?.theme?.customization?.primaryColor) : baseTheme),
+    [baseTheme, serverConfig],
+  );
+
   const pathname = usePathname();
   const { left, top } = useSafeAreaInsets();
 

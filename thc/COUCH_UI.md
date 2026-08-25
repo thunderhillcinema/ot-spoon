@@ -144,7 +144,15 @@ env-var mechanism the whole branded-app model already uses (one app = one
 distributor), so it slots straight into the `cust-app-template` `.customizations`
 file — no code fork required for adoption.
 
-**Remaining follow-up — per-instance palette.** The palette is still static in
-`colors.ts`. To let each instance colour its own frame, read the admin theme
-(`/api/v1/config` `theme.customization.primary_color`) and feed it into the
-amber-accent tokens. Small, well-bounded, not yet done.
+**Per-instance palette — done.** On the on-air couch, the amber accent
+(`theme500` — the only token the focus glow, border, kicker, CH badge and card
+shadow read) is recoloured with the current PeerTube instance's own brand colour,
+so each instance colours its own frame. The colour comes from the server config
+(`ServerConfig.theme.customization.primaryColor`, `/api/v1/config`, via the
+existing cached `useGetInstanceServerConfigQuery`); it's applied at the root
+`ThemeProvider` (`app/_layout.tsx`) through the pure `applyInstanceAccent`
+(`theme/accent.ts`). That field is admin-typed and often blank/non-hex, so
+`isValidAccent` gates it (hex or rgb/hsl only; named colours not trusted) and it
+falls back to the built-in amber ramp otherwise — and the whole thing is gated on
+`IS_TV_LAYOUT`, so vanilla (off-couch) builds are untouched. Only `theme500` is
+overridden; the broadcast grounds/ink stay put. Pinned by `theme/accent.test.ts`.
