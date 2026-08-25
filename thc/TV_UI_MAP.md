@@ -1,7 +1,7 @@
 # TV UI Map — the couch experience (ot-spoon / OwnTube)
 
 Code-grounded map of OwnTube's TV surface, for THC's carrier initiative. TV was
-the *forcing function* for adopting OwnTube (see `thc/SPINE.md` §1), so this is
+the _forcing function_ for adopting OwnTube (see `thc/SPINE.md` §1), so this is
 the part that matters most. Every claim carries a `file:line` into `OwnTube.tv/`.
 
 > Orientation doc. The TV UI is a **build target** (tvOS / Android TV), not the
@@ -28,18 +28,21 @@ the part that matters most. Every claim carries a `file:line` into `OwnTube.tv/`
 ## 2. The five couch surfaces
 
 ### a. TV entry / shell — `app/_layout.tsx`
+
 Boots the same app shell; `Platform.isTV` (`:80`) enables the remote Menu/Back key
 via `TVEventControl.enableTVMenuKey()`. Nav drawer is `permanent` on large screens.
 
 ### b. Landing / instance picker — `screens/LandingScreen/LandingScreen.tsx`
+
 Reads `featuredInstances` from `AppConfigContext` (`:32`), `handleSelectSource(hostname)`
 (`:51`) validates the pick via `useGetInstanceServerConfigQuery` (`:47`) then routes
 to `/home?backend=<hostname>`. A custom-instance option (`openCustomSite`, `:144`)
 lets a user type a hostname — on TV that typing is done with the on-screen keyboard
-(surface *e*). **For a branded THC app this screen is normally hidden** (single
+(surface _e_). **For a branded THC app this screen is normally hidden** (single
 primary backend) — see §3.
 
 ### c. Home = rails of posters — `screens/HomeScreen/index.tsx`
+
 A vertical `SectionList` of horizontal `VideoGrid` rails (`:88-153`), in order:
 **Live Streams → Latest → Recently Watched → Playlists → Channels → Categories**.
 This is the lean-back catalog the spine asked for. Every rail's presence/size is
@@ -48,7 +51,9 @@ driven by the instance's `customizations` (`homeHideChannelsOverview`,
 `public/featured-instances.json5`. **THC shapes the TV home as DATA, not code.**
 
 ### d. Playback — `components/VideoControlsOverlay/VideoControlsOverlay.tv.tsx` (460 lines)
+
 A purpose-built 10-foot player:
+
 - **Remote events:** `useTVEventHandler` (`:141`) handles `playPause` etc.
 - **Layout:** top gradient bar = Back / channel link / title(4 lines) / Details /
   Share / Settings (`:212-266`); center transport = **Rewind-15 · Play/Pause · FF-30**,
@@ -61,6 +66,7 @@ A purpose-built 10-foot player:
   (`PlaybackSettingsPopup`, `:298-312`).
 
 ### e. TV text input — `components/TvKeyboard.tsx`
+
 An on-screen D-pad keyboard (`mode: "url"`: a-z, digits, `- _ ~ / .`) for typing an
 instance hostname with a remote. OwnTube's built-in answer to the same problem THC
 solved with QR-pairing + phone `/remote`. `Picker.tv.tsx` is the D-pad-friendly
@@ -69,6 +75,7 @@ dropdown (animated slide + `requestTVFocus`).
 ## 3. The D-pad focus model (the reusable primitive)
 
 Pure `react-native-tvos`, three tools:
+
 - **`TVFocusGuideView`** (re-exported at `components/helpers/TVFocusGuideHelper/TVFocusGuideHelper.tsx`;
   the `.web.tsx` sibling stubs it) with `autoFocus` / `trapFocus{Up,Down,Left,Right}`
   to corral focus inside a region (e.g. the transport row traps L/R so the D-pad
@@ -84,6 +91,7 @@ Pure `react-native-tvos`, three tools:
 ## 4. Where THC shapes it — config vs. net-new
 
 **Config/data (the "style our curation, don't build an app" thesis holds):**
+
 - `public/featured-instances.json5` `customizations` → which home rails, their
   sizes, featured lives, hidden playlists.
 - `EXPO_PUBLIC_PRIMARY_BACKEND` → THC as the default instance; +
@@ -100,13 +108,13 @@ THC-flavored playback overlay. This is a design decision, not a given — see
 
 ## 5. Platform coverage & gaps
 
-| Platform | Path | Status |
-|---|---|---|
-| Apple TV (tvOS) | RN-tvos build, `EXPO_TV=1` | wired, CI job exists |
-| Android TV / Fire TV | RN-tvos build, `EXPO_TV=1` | wired, CI job exists |
-| Samsung Tizen / LG webOS | package the static web build | net-new (spine §4) |
-| Roku | PeerVue (separate) or defer | not started |
-| Any smart-TV browser | existing THC `/tv` LiveView | fallback baseline |
+| Platform                 | Path                         | Status               |
+| ------------------------ | ---------------------------- | -------------------- |
+| Apple TV (tvOS)          | RN-tvos build, `EXPO_TV=1`   | wired, CI job exists |
+| Android TV / Fire TV     | RN-tvos build, `EXPO_TV=1`   | wired, CI job exists |
+| Samsung Tizen / LG webOS | package the static web build | net-new (spine §4)   |
+| Roku                     | PeerVue (separate) or defer  | not started          |
+| Any smart-TV browser     | existing THC `/tv` LiveView  | fallback baseline    |
 
 **Gaps to close:** THC branding assets (TV banner/top-shelf) don't exist yet; the
 THC-specific rails are unspecified; Tizen/webOS packaging is net-new; and no one
