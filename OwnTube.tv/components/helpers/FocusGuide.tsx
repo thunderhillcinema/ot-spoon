@@ -14,7 +14,13 @@ const GLOW_LAYERS = [
   { spread: 15, strokeWidth: 14, opacity: 0.13 },
   { spread: 22, strokeWidth: 18, opacity: 0.06 },
 ];
-const PAD = 34; // room for the outermost, thickest layer
+const PAD = 38; // room for the outermost, thickest layer (+ the base outset below)
+// The innermost ring is inflated by OUTSET so the glow sits just OUTSIDE the
+// thumbnail on every side. Without it the ring's rounded corner (rx 12) cuts
+// inside the thumbnail's squarer corner (~8), and the tile pokes past the glow.
+// At OUTSET 4 the inner ring is concentric with the thumbnail corner, one step
+// larger — so it fully surrounds it.
+const OUTSET = 4;
 
 export const FocusGuide = ({ width, height }: SvgProps) => {
   const { colors } = useTheme();
@@ -29,10 +35,10 @@ export const FocusGuide = ({ width, height }: SvgProps) => {
         {GLOW_LAYERS.map((layer, i) => (
           <Rect
             key={i}
-            x={PAD - layer.spread}
-            y={PAD - layer.spread}
-            width={dims.w + layer.spread * 2}
-            height={dims.h + layer.spread * 2}
+            x={PAD - OUTSET - layer.spread}
+            y={PAD - OUTSET - layer.spread}
+            width={dims.w + (OUTSET + layer.spread) * 2}
+            height={dims.h + (OUTSET + layer.spread) * 2}
             rx={12 + layer.spread}
             ry={12 + layer.spread}
             fill="none"
