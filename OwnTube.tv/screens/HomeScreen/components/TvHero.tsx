@@ -15,7 +15,17 @@ const SCRIM = ["rgba(11,13,14,0.96)", "rgba(11,13,14,0.55)", "rgba(11,13,14,0)"]
 
 // TvHero — the featured spotlight at the top of the couch home. Big backdrop +
 // on-air "NOW SHOWING" kicker + title + channel. Clicking opens the video.
-export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: string }) => {
+export const TvHero = ({
+  video,
+  backend,
+  compact,
+  kicker = "NOW SHOWING",
+}: {
+  video?: GetVideosVideo;
+  backend?: string;
+  compact?: boolean;
+  kicker?: string;
+}) => {
   const { colors } = useTheme();
   const { height } = useWindowDimensions();
   const router = useRouter();
@@ -24,7 +34,7 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
 
   if (!video) return null;
 
-  const heroHeight = Math.min(Math.round(height * 0.52), 480);
+  const heroHeight = compact ? Math.min(Math.round(height * 0.34), 300) : Math.min(Math.round(height * 0.52), 480);
   const source = video.previewPath ? { uri: video.previewPath } : undefined;
 
   return (
@@ -37,7 +47,7 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
           <View style={styles.kickerRow}>
             <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
             <Typography style={styles.kicker} color={colors.theme500} fontWeight="ExtraBold">
-              NOW SHOWING
+              {kicker}
             </Typography>
           </View>
           <Typography

@@ -98,6 +98,7 @@ export const HomeScreen = () => {
     return [
       {
         title: t("liveStreams"),
+        featured: liveVideosData?.[0],
         renderItem: () => (
           <VideoGrid
             scrollable={showHorizontalScrollableLists}
@@ -111,6 +112,7 @@ export const HomeScreen = () => {
       },
       {
         title: t("latestVideos"),
+        featured: heroVideo,
         renderItem: () => <LatestVideosView />,
         data: ["dataItemPlaceholder"],
         isVisible: true,
@@ -118,6 +120,7 @@ export const HomeScreen = () => {
       {
         title: isMobile ? t("recentlyWatchedAbbr") : t("recentlyWatched"),
         link: { text: t("viewHistory"), route: `/${ROUTES.HISTORY}` },
+        featured: historyData?.[0],
         renderItem: () => (
           <VideoGrid
             scrollable={showHorizontalScrollableLists}
@@ -169,6 +172,7 @@ export const HomeScreen = () => {
     categories,
     currentInstanceConfig,
     liveVideosData,
+    heroVideo,
     showHorizontalScrollableLists,
     isMobile,
   ]);
@@ -224,6 +228,7 @@ export const HomeScreen = () => {
             <SectionHeader
               title={section.title}
               link={section.link}
+              featured={"featured" in section ? section.featured : undefined}
               channelNo={sections.findIndex((s) => s.title === section.title) + 2}
             />
           )}
