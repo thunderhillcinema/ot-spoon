@@ -41,6 +41,9 @@ const CABINET_MODELS: readonly (readonly [string, string, string])[] = [
   ["#313337", "#212327", "#15171A"],
 ];
 
+// Lower front-panel height (title + channel + date) added to the screen height.
+const CABINET_TEXT_PANEL = 104;
+
 export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, backend }, ref) => {
   const { isDesktop } = useBreakpoints();
   const { colors } = useTheme();
@@ -92,6 +95,13 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
     return CABINET_MODELS[sum % CABINET_MODELS.length];
   }, [video.uuid, video.name]);
 
+  // Explicit cabinet height — the flow kept collapsing, so force it: screen (16:9
+  // of the measured inner width) + bezels + a lower panel for the title/detail.
+  const cardHeight =
+    IS_TV_LAYOUT && containerWidth > 0
+      ? Math.round(containerWidth * (9 / 16)) + spacing.md * 2 + CABINET_TEXT_PANEL
+      : undefined;
+
   const handleTvNavigateToVideo = () => {
     router.navigate(linkHref);
   };
@@ -107,7 +117,12 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
   return (
     <CabinetContainer
       {...cabinetContainerProps}
-      style={[styles.container, IS_TV_LAYOUT && styles.cabinetTV, isTvFocused && tvFocusStyle]}
+      style={[
+        styles.container,
+        IS_TV_LAYOUT && styles.cabinetTV,
+        cardHeight ? { height: cardHeight } : null,
+        isTvFocused && tvFocusStyle,
+      ]}
     >
       <Pressable
         onFocus={IS_TV_LAYOUT ? () => setFocused(true) : null}
