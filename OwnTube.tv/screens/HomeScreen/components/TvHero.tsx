@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { Typography } from "../../../components";
-import { CrtScreen } from "../../../components/helpers";
+import { CrtScreen, FocusGuide } from "../../../components/helpers";
 import { spacing } from "../../../theme";
 import { GetVideosVideo } from "../../../api/models";
 import { ROUTES } from "../../../types";
@@ -16,10 +16,11 @@ import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../../../utils/tvPreview";
 // On-air scrim — near-black fading up/right off the backdrop, for legibility.
 const SCRIM = ["rgba(11,13,14,0.96)", "rgba(11,13,14,0.55)", "rgba(11,13,14,0)"] as const;
 
-// The transparent stop the inward focus glow fades to.
+// The transparent stop the vignette gradients fade to.
 const TRANSPARENT = "transparent";
-// How far the inward focus glow reaches from each edge.
-const GLOW_THICKNESS = 48;
+// Neutral-state vignette: the tube sits a touch darker at its edges until focused.
+const VIGNETTE = "rgba(0,0,0,0.72)";
+const VIGNETTE_THICKNESS = 150;
 
 // TvHero — the featured spotlight at the top of the couch home. Big backdrop +
 // on-air "NOW SHOWING" kicker + title + channel. Clicking (or pressing SELECT on
@@ -60,15 +61,23 @@ export const TvHero = ({
   // preview there's no D-pad, so hover stands in. Mirrors VideoGridCard.
   const [active, setActive] = useState(false);
 
-  // Smooth brightness fade when active (0.82 → 1) — the picture "tunes in".
-  const brightness = useRef(new Animated.Value(0.82)).current;
+  // One driver, 0 (neutral) → 1 (focused), fans out to every focus effect below.
+  const focus = useRef(new Animated.Value(0)).current;
   useEffect(() => {
-    Animated.timing(brightness, {
-      toValue: active ? 1 : 0.82,
+    Animated.timing(focus, {
+      toValue: active ? 1 : 0,
       duration: 260,
       useNativeDriver: true,
     }).start();
-  }, [active, brightness]);
+  }, [active, focus]);
+
+  // The picture "tunes in": brightens and zooms slightly WITHIN its frame (the
+  // hero clips via overflow:hidden, so nothing spills or shifts layout). The frame
+  // staying put is what lets the amber glow bloom OUTWARD around a stable anchor.
+  const imageBrightness = focus.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] });
+  const imageScale = focus.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] });
+  // Vignette recedes (darker → lighter) as the tube tunes in.
+  const vignetteOpacity = focus.interpolate({ inputRange: [0, 1], outputRange: [0.6, 0.12] });
 
   const uri = imageUrl ?? video?.previewPath;
   const displayTitle = title ?? video?.name;
@@ -93,12 +102,6 @@ export const TvHero = ({
     if (IS_TV_PREVIEW_WEB) setActive(false);
   };
 
-  // On-air focus cue: an INWARD amber glow — the tube's own edges lighting up. The
-  // hero is full-bleed, so an outward glow (as on the small cards) would clip at
-  // the screen edge; an inward glow is the analog that actually reads here, in the
-  // same amber phosphor language. TV/preview only.
-  const showGlow = IS_TV_LAYOUT && active;
-
   return (
     <Pressable
       hasTVPreferredFocus={IS_TV_LAYOUT && !!initialFocus}
@@ -108,42 +111,54 @@ export const TvHero = ({
       onHoverIn={handleHoverIn}
       onHoverOut={handleHoverOut}
     >
+      {/* Outward amber glow — the SAME staggered phosphor bloom the cards use
+          (FocusGuide), sitting BEHIND the hero (zIndex -1) so it spills past the
+          edges. Lives outside the hero's overflow:hidden as a sibling. */}
+      {IS_TV_LAYOUT && active && heroWidth > 0 && <FocusGuide width={heroWidth} height={heroHeight} />}
       <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
         <AnimatedImage
           source={source}
-          style={[StyleSheet.absoluteFill, { opacity: brightness }]}
+          style={[StyleSheet.absoluteFill, { opacity: imageBrightness, transform: [{ scale: imageScale }] }]}
           contentFit="cover"
           transition={200}
         />
         {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={active ? 0.35 : 0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
-        {showGlow && (
-          <View style={styles.glow} pointerEvents="none">
-            <LinearGradient
-              colors={[colors.theme500, TRANSPARENT]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.glowTop}
+        {IS_TV_LAYOUT && (
+          <>
+            {/* Neutral vignette — darker at rest, recedes on focus. */}
+            <Animated.View style={[styles.overlayFill, { opacity: vignetteOpacity }]} pointerEvents="none">
+              <LinearGradient
+                colors={[VIGNETTE, TRANSPARENT] as const}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.vignetteTop}
+              />
+              <LinearGradient
+                colors={[TRANSPARENT, VIGNETTE] as const}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 0, y: 1 }}
+                style={styles.vignetteBottom}
+              />
+              <LinearGradient
+                colors={[VIGNETTE, TRANSPARENT] as const}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.vignetteLeft}
+              />
+              <LinearGradient
+                colors={[TRANSPARENT, VIGNETTE] as const}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.vignetteRight}
+              />
+            </Animated.View>
+            {/* Crisp amber border — the glow's innermost edge, on the tube itself. */}
+            <Animated.View
+              style={[styles.border, { borderColor: colors.theme500, opacity: focus }]}
+              pointerEvents="none"
             />
-            <LinearGradient
-              colors={[TRANSPARENT, colors.theme500]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.glowBottom}
-            />
-            <LinearGradient
-              colors={[colors.theme500, TRANSPARENT]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.glowLeft}
-            />
-            <LinearGradient
-              colors={[TRANSPARENT, colors.theme500]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.glowRight}
-            />
-          </View>
+          </>
         )}
         <View style={styles.content}>
           <View style={styles.kickerRow}>
@@ -173,12 +188,8 @@ export const TvHero = ({
 };
 
 const styles = StyleSheet.create({
+  border: { borderWidth: 2, bottom: 0, left: 0, position: "absolute", right: 0, top: 0, zIndex: 1 },
   content: { bottom: 0, gap: spacing.sm, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
-  glow: { bottom: 0, left: 0, opacity: 0.5, position: "absolute", right: 0, top: 0, zIndex: 1 },
-  glowBottom: { bottom: 0, height: GLOW_THICKNESS, left: 0, position: "absolute", right: 0 },
-  glowLeft: { bottom: 0, left: 0, position: "absolute", top: 0, width: GLOW_THICKNESS },
-  glowRight: { bottom: 0, position: "absolute", right: 0, top: 0, width: GLOW_THICKNESS },
-  glowTop: { height: GLOW_THICKNESS, left: 0, position: "absolute", right: 0, top: 0 },
   hero: {
     justifyContent: "flex-end",
     marginBottom: spacing.lg,
@@ -187,6 +198,7 @@ const styles = StyleSheet.create({
   },
   kicker: { letterSpacing: 3 },
   kickerRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
+  overlayFill: { bottom: 0, left: 0, position: "absolute", right: 0, top: 0, zIndex: 1 },
   tally: {
     borderRadius: 5,
     height: 10,
@@ -196,4 +208,8 @@ const styles = StyleSheet.create({
     width: 10,
   },
   title: { lineHeight: 40, maxWidth: 760 },
+  vignetteBottom: { bottom: 0, height: VIGNETTE_THICKNESS, left: 0, position: "absolute", right: 0 },
+  vignetteLeft: { bottom: 0, left: 0, position: "absolute", top: 0, width: VIGNETTE_THICKNESS },
+  vignetteRight: { bottom: 0, position: "absolute", right: 0, top: 0, width: VIGNETTE_THICKNESS },
+  vignetteTop: { height: VIGNETTE_THICKNESS, left: 0, position: "absolute", right: 0, top: 0 },
 });
