@@ -1,9 +1,11 @@
 import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
+import { useState } from "react";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { Typography } from "../../../components";
+import { CrtScreen } from "../../../components/helpers";
 import { spacing } from "../../../theme";
 import { GetVideosVideo } from "../../../api/models";
 import { ROUTES } from "../../../types";
@@ -18,6 +20,8 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
   const { height } = useWindowDimensions();
   const router = useRouter();
 
+  const [heroWidth, setHeroWidth] = useState(0);
+
   if (!video) return null;
 
   const heroHeight = Math.min(Math.round(height * 0.52), 480);
@@ -25,8 +29,9 @@ export const TvHero = ({ video, backend }: { video?: GetVideosVideo; backend?: s
 
   return (
     <Pressable onPress={() => router.navigate({ pathname: `/${ROUTES.VIDEO}`, params: { id: video.uuid, backend } })}>
-      <View style={[styles.hero, { height: heroHeight }]}>
+      <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
         <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+        {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
         <View style={styles.content}>
           <Typography style={styles.kicker} color={colors.theme500} fontWeight="ExtraBold">
