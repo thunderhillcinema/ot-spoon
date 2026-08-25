@@ -21,8 +21,10 @@
   grid-auto-columns: 22vw;
   grid-template-rows: 1fr;
   column-gap: 28px;
+  /* overflow-x scroll, but let the focus lift/glow spill out vertically */
   overflow-x: auto;
-  padding: 8px 24px 24px 24px;
+  overflow-y: visible;
+  padding: 44px 24px 44px 24px;
   width: 100%;
   scrollbar-width: none;
 }
