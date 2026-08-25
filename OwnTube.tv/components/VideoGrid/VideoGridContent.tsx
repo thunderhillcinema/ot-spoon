@@ -7,6 +7,7 @@ import { VideoGridProps } from "./VideoGrid";
 import { TVActionCard, TVActionCardProps } from "../TVActionCard";
 import { useBreakpoints } from "../../hooks";
 import { GetVideosVideo } from "../../api/models";
+import { IS_TV_LAYOUT } from "../../utils/tvPreview";
 
 export interface VideoGridContentHandle {
   focusLastItem: () => void;
@@ -40,7 +41,8 @@ export const VideoGridContent = forwardRef<VideoGridContentHandle, VideoGridCont
     }));
 
     const isTVActionCardVisible = Platform.isTV && !isLoading && !tvActionCardProps.isHidden;
-    const isHorizontalScrollingEnabled = scrollable && breakpoints.isMobile;
+    // Couch: rows scroll horizontally and bleed off the right edge (the "more →" cue).
+    const isHorizontalScrollingEnabled = (scrollable && breakpoints.isMobile) || IS_TV_LAYOUT;
 
     const listData = useMemo(() => {
       const numItemsToAdd = numColumns - (data.length % numColumns);
@@ -113,7 +115,12 @@ export const VideoGridContent = forwardRef<VideoGridContentHandle, VideoGridCont
     return (
       <View
         style={Platform.select<ViewStyle>({
-          web: { $$css: true, _: `grid-container${isHorizontalScrollingEnabled ? "-scrollable" : ""}` },
+          web: {
+            $$css: true,
+            _: IS_TV_LAYOUT
+              ? "grid-container-tv"
+              : `grid-container${isHorizontalScrollingEnabled ? "-scrollable" : ""}`,
+          },
           default: { ...styles.gridContainerNonWeb, flexWrap: isHorizontalScrollingEnabled ? "nowrap" : "wrap" },
         })}
         onLayout={isHorizontalScrollingEnabled ? undefined : handleLayout}
