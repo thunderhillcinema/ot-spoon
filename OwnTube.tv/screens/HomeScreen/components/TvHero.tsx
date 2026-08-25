@@ -70,7 +70,7 @@ export const TvHero = ({
           </View>
           <Typography
             style={styles.title}
-            color={colors.theme900}
+            color={colors.white94}
             fontSize="sizeXL"
             fontWeight="ExtraBold"
             numberOfLines={2}
@@ -78,7 +78,7 @@ export const TvHero = ({
             {displayTitle}
           </Typography>
           {!!displaySubtitle && (
-            <Typography color={colors.theme800} fontWeight="Medium" numberOfLines={1}>
+            <Typography color={colors.white80} fontWeight="Medium" numberOfLines={1}>
               {displaySubtitle}
             </Typography>
           )}
