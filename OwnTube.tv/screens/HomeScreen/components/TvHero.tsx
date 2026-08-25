@@ -34,7 +34,7 @@ export const TvHero = ({
 
   if (!video) return null;
 
-  const heroHeight = compact ? Math.min(Math.round(height * 0.34), 300) : Math.min(Math.round(height * 0.52), 480);
+  const heroHeight = compact ? Math.min(Math.round(height * 0.62), 560) : Math.min(Math.round(height * 0.52), 480);
   const source = video.previewPath ? { uri: video.previewPath } : undefined;
 
   return (

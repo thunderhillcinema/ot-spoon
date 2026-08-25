@@ -115,15 +115,9 @@ export const HomeScreen = () => {
         isVisible: Number(liveVideosData?.length) > 0,
       },
       {
+        // No section hero here — the page-level hero already features the latest video.
         title: t("latestVideos"),
-        renderItem: () => (
-          <>
-            {IS_TV_LAYOUT && heroVideo && (
-              <TvHero video={heroVideo} backend={backend} compact kicker={t("latestVideos")} />
-            )}
-            <LatestVideosView />
-          </>
-        ),
+        renderItem: () => <LatestVideosView />,
         data: ["dataItemPlaceholder"],
         isVisible: true,
       },
