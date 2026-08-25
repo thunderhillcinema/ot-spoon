@@ -13,36 +13,17 @@ import TVFocusGuideHelper from "./helpers/TVFocusGuideHelper";
 import { FocusGuide } from "./helpers";
 import { VideoItemFooter } from "./VideoItemFooter";
 import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../utils/tvPreview";
-import { LinearGradient } from "expo-linear-gradient";
 
 interface VideoGridCardProps {
   video: GetVideosVideo;
   backend?: string;
 }
 
-// CRT cabinet material — deliberately fixed dark (a television is dark regardless
-// of theme), so it lives outside the theme tokens.
+// Recessed CRT screen material (kept — this is the screen, not the dropped frame).
 const CABINET = {
-  shell: "#17191B",
-  border: "#0A0C0D",
-  highlight: "#2B2E30",
-  shadow: "#000000",
   screen: "#05070A",
   bezel: "#000000",
 };
-
-// Cabinet finishes (top-lit → shadowed bottom) so a rail reads as a shelf of
-// mismatched sets — graphite / walnut / onyx. The bottom stops stay clearly
-// ABOVE the near-black room (#0B0D0E) so the whole cabinet reads as a solid
-// lighter block, not a gradient that fades into the background.
-const CABINET_MODELS: readonly (readonly [string, string, string])[] = [
-  ["#3B3E42", "#292C30", "#191C1F"],
-  ["#463522", "#31251A", "#201811"],
-  ["#313337", "#212327", "#15171A"],
-];
-
-// Lower front-panel height (title + channel + date) added to the screen height.
-const CABINET_TEXT_PANEL = 104;
 
 export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, backend }, ref) => {
   const { isDesktop } = useBreakpoints();
@@ -87,43 +68,12 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
     [colors],
   );
 
-  // Deterministic cabinet finish per video, so the shelf looks mismatched but stable.
-  const cabinetColors = useMemo(() => {
-    const key = video.uuid || video.name || "";
-    let sum = 0;
-    for (let i = 0; i < key.length; i++) sum += key.charCodeAt(i);
-    return CABINET_MODELS[sum % CABINET_MODELS.length];
-  }, [video.uuid, video.name]);
-
-  // Explicit cabinet height — the flow kept collapsing, so force it: screen (16:9
-  // of the measured inner width) + bezels + a lower panel for the title/detail.
-  const cardHeight =
-    IS_TV_LAYOUT && containerWidth > 0
-      ? Math.round(containerWidth * (9 / 16)) + spacing.md * 2 + CABINET_TEXT_PANEL
-      : undefined;
-
   const handleTvNavigateToVideo = () => {
     router.navigate(linkHref);
   };
 
-  // The cabinet IS the gradient element wrapping the whole card (screen + the
-  // title/detail below it), so the molded shell reliably fills the full height.
-  // An absolute-fill gradient collapsed because the thumbnail wrapper is height:100%.
-  const CabinetContainer = IS_TV_LAYOUT ? LinearGradient : View;
-  const cabinetContainerProps = IS_TV_LAYOUT
-    ? { colors: cabinetColors, start: { x: 0.3, y: 0 }, end: { x: 0.7, y: 1 } }
-    : {};
-
   return (
-    <CabinetContainer
-      {...cabinetContainerProps}
-      style={[
-        styles.container,
-        IS_TV_LAYOUT && styles.cabinetTV,
-        cardHeight ? { height: cardHeight } : null,
-        isTvFocused && tvFocusStyle,
-      ]}
-    >
+    <View style={[styles.container, isTvFocused && tvFocusStyle]}>
       <Pressable
         onFocus={IS_TV_LAYOUT ? () => setFocused(true) : null}
         onBlur={IS_TV_LAYOUT ? () => setFocused(false) : null}
@@ -177,31 +127,13 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
         />
         <VideoItemFooter video={video} />
       </TVFocusGuideHelper>
-    </CabinetContainer>
+    </View>
   );
 });
 
 VideoGridCard.displayName = "VideoGridCard";
 
 const styles = StyleSheet.create({
-  // TV cabinet: the whole item is a television — dark shell, rounded corners, a
-  // top highlight edge, a bezel (padding) around the screen, and a lower front
-  // panel (paddingBottom) that holds the title + detail. On-air dark, deliberate.
-  cabinetTV: {
-    backgroundColor: CABINET.shell,
-    borderColor: CABINET.border,
-    borderRadius: 16,
-    borderTopColor: CABINET.highlight,
-    borderWidth: 1,
-    gap: spacing.sm,
-    overflow: "visible",
-    padding: spacing.md,
-    paddingBottom: spacing.md,
-    shadowColor: CABINET.shadow,
-    shadowOffset: { height: 14, width: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 22,
-  },
   container: {
     flex: 0,
     gap: spacing.sm,
