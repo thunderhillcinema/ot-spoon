@@ -33,6 +33,7 @@ import { useAuthSessionSync } from "../hooks/useAuthSessionSync";
 import { PostHogProvider, usePostHog } from "posthog-react-native";
 import { postHogInstance } from "../diagnostics";
 import { VideosSearchQuery } from "@peertube/peertube-types";
+import { IS_TV_LAYOUT } from "../utils/tvPreview";
 
 export const CLOSED_DRAWER_WIDTH = 64;
 export const OPEN_DRAWER_WIDTH = 272;
@@ -109,7 +110,10 @@ const RootStack = () => {
             drawerType: breakpoints.isMobile ? "front" : "permanent",
             drawerStyle: {
               display: !backend ? "none" : "flex",
-              width: (!breakpoints.isDesktop && !breakpoints.isMobile ? CLOSED_DRAWER_WIDTH : OPEN_DRAWER_WIDTH) + left,
+              width:
+                (IS_TV_LAYOUT || (!breakpoints.isDesktop && !breakpoints.isMobile)
+                  ? CLOSED_DRAWER_WIDTH
+                  : OPEN_DRAWER_WIDTH) + left,
               borderRightWidth: 0,
             },
             header: (props) => renderAppHeader(props),

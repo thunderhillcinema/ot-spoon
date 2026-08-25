@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useAppConfigContext, useColorSchemeContext, useFullScreenModalContext } from "../contexts";
 import { Platform, StyleSheet, View } from "react-native";
 import { Button, Separator } from "./shared";
+import { IS_TV_LAYOUT } from "../utils/tvPreview";
 import { spacing } from "../theme";
 import { Spacer } from "./shared/Spacer";
 import { useBreakpoints, useShareButton } from "../hooks";
@@ -70,7 +71,8 @@ export const Sidebar: FC<SidebarProps> = ({ backend, ...navigationProps }) => {
   const { t } = useTranslation();
   const isDarkMode = scheme === "dark";
   const breakpoints = useBreakpoints();
-  const shouldExpand = breakpoints.isDesktop || breakpoints.isMobile;
+  // On the couch, the nav is a slim icon rail (icons only), not the fat sidebar.
+  const shouldExpand = IS_TV_LAYOUT ? false : breakpoints.isDesktop || breakpoints.isMobile;
   const { toggleModal, setContent } = useFullScreenModalContext();
   const { isConnected } = useNetInfo();
   const { isLeaveInstanceAllowed } = useLeaveInstancePermission(navigationProps);
