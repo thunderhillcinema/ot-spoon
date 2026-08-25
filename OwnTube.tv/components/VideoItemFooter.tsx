@@ -10,6 +10,9 @@ export const VideoItemFooter = ({ video }: { video: GetVideosVideo }) => {
   const { t, i18n } = useTranslation();
   const { colors } = useTheme();
 
+  // On the couch, no metadata line under the tile.
+  if (IS_TV_LAYOUT) return null;
+
   const dateText = video.publishedAt
     ? formatDistanceToNow(video.publishedAt, {
         addSuffix: true,
