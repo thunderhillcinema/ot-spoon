@@ -6,7 +6,6 @@ import {
   useGetChannelsQuery,
   useGetPlaylistsQuery,
   useGetVideoFullInfoCollectionQuery,
-  useGetVideoQuery,
   useGetVideosQuery,
 } from "../../api";
 import { useMemo, useState } from "react";
@@ -67,10 +66,6 @@ export const HomeScreen = () => {
     enabled: IS_TV_LAYOUT,
   });
   const heroVideo = heroVideos?.data?.[0];
-
-  // Full info for the page hero, to get its HLS URL for the autoplay backdrop (web).
-  const { data: heroFullInfo } = useGetVideoQuery({ id: heroVideo?.uuid, enabled: IS_TV_LAYOUT && !!heroVideo?.uuid });
-  const heroPlaybackUrl = heroFullInfo?.streamingPlaylists?.[0]?.playlistUrl;
 
   const liveVideoIds = useMemo(() => {
     return Array.from(
@@ -249,9 +244,7 @@ export const HomeScreen = () => {
           disableVirtualization
           stickySectionHeadersEnabled
           showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            IS_TV_LAYOUT ? <TvHero video={heroVideo} backend={backend} playbackUrl={heroPlaybackUrl} /> : undefined
-          }
+          ListHeaderComponent={IS_TV_LAYOUT ? <TvHero video={heroVideo} backend={backend} /> : undefined}
           ListFooterComponent={<InfoFooter />}
           style={{
             ...styles.paddingContainer,
