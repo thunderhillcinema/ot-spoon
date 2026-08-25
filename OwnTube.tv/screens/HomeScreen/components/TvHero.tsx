@@ -41,6 +41,7 @@ export const TvHero = ({
   const router = useRouter();
 
   const [heroWidth, setHeroWidth] = useState(0);
+  const [hovered, setHovered] = useState(false);
 
   const uri = imageUrl ?? video?.previewPath;
   const displayTitle = title ?? video?.name;
@@ -56,9 +57,14 @@ export const TvHero = ({
     (video ? () => router.navigate({ pathname: `/${ROUTES.VIDEO}`, params: { id: video.uuid, backend } }) : undefined);
 
   return (
-    <Pressable onPress={handlePress}>
+    <Pressable onPress={handlePress} onHoverIn={() => setHovered(true)} onHoverOut={() => setHovered(false)}>
       <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
-        <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+        <Image
+          source={source}
+          style={[StyleSheet.absoluteFill, { opacity: hovered ? 1 : 0.82 }]}
+          contentFit="cover"
+          transition={200}
+        />
         {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
         <View style={styles.content}>

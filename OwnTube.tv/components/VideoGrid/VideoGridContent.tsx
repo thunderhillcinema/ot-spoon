@@ -18,10 +18,13 @@ interface VideoGridContentProps extends Pick<VideoGridProps, "data" | "variant">
   backend?: string;
   tvActionCardProps: Omit<TVActionCardProps, "width"> & { isHidden?: boolean };
   scrollable?: boolean;
+  // When true (an explicit grid/list toggle page), stay a wrapping grid — don't
+  // force the couch horizontal-scroll rows.
+  forceGrid?: boolean;
 }
 
 export const VideoGridContent = forwardRef<VideoGridContentHandle, VideoGridContentProps>(
-  ({ isLoading, data = [], variant, backend, tvActionCardProps, scrollable = false }, ref) => {
+  ({ isLoading, data = [], variant, backend, tvActionCardProps, scrollable = false, forceGrid = false }, ref) => {
     const [containerWidth, setContainerWidth] = useState(0);
     const lastItemRef = useRef<View>(null);
 
@@ -41,8 +44,9 @@ export const VideoGridContent = forwardRef<VideoGridContentHandle, VideoGridCont
     }));
 
     const isTVActionCardVisible = Platform.isTV && !isLoading && !tvActionCardProps.isHidden;
-    // Couch: rows scroll horizontally and bleed off the right edge (the "more →" cue).
-    const isHorizontalScrollingEnabled = (scrollable && breakpoints.isMobile) || IS_TV_LAYOUT;
+    // Couch: rows scroll horizontally and bleed off the right edge (the "more →"
+    // cue) — but NOT when an explicit grid toggle (forceGrid) asked for a grid.
+    const isHorizontalScrollingEnabled = (scrollable && breakpoints.isMobile) || (IS_TV_LAYOUT && !forceGrid);
 
     const listData = useMemo(() => {
       const numItemsToAdd = numColumns - (data.length % numColumns);
@@ -117,9 +121,10 @@ export const VideoGridContent = forwardRef<VideoGridContentHandle, VideoGridCont
         style={Platform.select<ViewStyle>({
           web: {
             $$css: true,
-            _: IS_TV_LAYOUT
-              ? "grid-container-tv"
-              : `grid-container${isHorizontalScrollingEnabled ? "-scrollable" : ""}`,
+            _:
+              IS_TV_LAYOUT && !forceGrid
+                ? "grid-container-tv"
+                : `grid-container${isHorizontalScrollingEnabled ? "-scrollable" : ""}`,
           },
           default: { ...styles.gridContainerNonWeb, flexWrap: isHorizontalScrollingEnabled ? "nowrap" : "wrap" },
         })}

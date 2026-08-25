@@ -98,6 +98,7 @@ export const VideoGrid = ({
         {customPresentation === "grid" ? (
           <VideoGridContent
             scrollable={scrollable}
+            forceGrid={!!presentation}
             tvActionCardProps={{
               isHidden: isTVActionCardHidden,
               isLoading: isLoadingMore,
