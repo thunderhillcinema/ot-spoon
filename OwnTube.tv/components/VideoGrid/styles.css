@@ -24,7 +24,8 @@
   /* overflow-x scroll, but let the focus lift/glow spill out vertically */
   overflow-x: auto;
   overflow-y: visible;
-  padding: 44px 24px 44px 24px;
+  /* horizontal padding matches the glow radius so the first/last card's glow isn't clipped */
+  padding: 44px 44px 44px 44px;
   width: 100%;
   scrollbar-width: none;
 }
