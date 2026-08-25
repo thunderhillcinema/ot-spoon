@@ -96,17 +96,19 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
     router.navigate(linkHref);
   };
 
+  // The cabinet IS the gradient element wrapping the whole card (screen + the
+  // title/detail below it), so the molded shell reliably fills the full height.
+  // An absolute-fill gradient collapsed because the thumbnail wrapper is height:100%.
+  const CabinetContainer = IS_TV_LAYOUT ? LinearGradient : View;
+  const cabinetContainerProps = IS_TV_LAYOUT
+    ? { colors: cabinetColors, start: { x: 0.3, y: 0 }, end: { x: 0.7, y: 1 } }
+    : {};
+
   return (
-    <View style={[styles.container, IS_TV_LAYOUT && styles.cabinetTV, isTvFocused && tvFocusStyle]}>
-      {IS_TV_LAYOUT && (
-        <LinearGradient
-          colors={cabinetColors}
-          start={{ x: 0.3, y: 0 }}
-          end={{ x: 0.7, y: 1 }}
-          style={[StyleSheet.absoluteFill, styles.cabinetShell]}
-          pointerEvents="none"
-        />
-      )}
+    <CabinetContainer
+      {...cabinetContainerProps}
+      style={[styles.container, IS_TV_LAYOUT && styles.cabinetTV, isTvFocused && tvFocusStyle]}
+    >
       <Pressable
         onFocus={IS_TV_LAYOUT ? () => setFocused(true) : null}
         onBlur={IS_TV_LAYOUT ? () => setFocused(false) : null}
@@ -160,15 +162,13 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
         />
         <VideoItemFooter video={video} />
       </TVFocusGuideHelper>
-    </View>
+    </CabinetContainer>
   );
 });
 
 VideoGridCard.displayName = "VideoGridCard";
 
 const styles = StyleSheet.create({
-  // The molded cabinet shell — a top-lit → shadowed gradient behind the whole card.
-  cabinetShell: { borderRadius: 16 },
   // TV cabinet: the whole item is a television — dark shell, rounded corners, a
   // top highlight edge, a bezel (padding) around the screen, and a lower front
   // panel (paddingBottom) that holds the title + detail. On-air dark, deliberate.
