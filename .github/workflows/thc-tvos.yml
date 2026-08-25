@@ -8,8 +8,9 @@ name: THC tvOS Simulator Build
 # simulator: see thc/TV_SIMULATOR.md.
 #
 # THC branding (on-air palette + curated cinema instances) is already in source
-# (theme/colors.ts, public/featured-instances.json5); the env below adds the app
-# name + dark mode.
+# (theme/colors.ts, public/featured-instances.json5). The couch LAYOUT is opt-in,
+# so the env below turns it on (EXPO_PUBLIC_TV_ON_AIR_THEME) — without it this TV
+# build renders the vanilla OwnTube layout — plus the app name + dark mode.
 
 on:
   workflow_dispatch:
@@ -30,4 +31,6 @@ jobs:
       customizations_env_content: |
         EXPO_PUBLIC_APP_NAME=Thunderhill Cinema
         EXPO_PUBLIC_APP_SLUG=thunderhillcinema
+        EXPO_PUBLIC_IOS_BUNDLE_IDENTIFIER=com.thunderhillcinema.tv
         EXPO_PUBLIC_USER_INTERFACE_STYLE=dark
+        EXPO_PUBLIC_TV_ON_AIR_THEME=1
