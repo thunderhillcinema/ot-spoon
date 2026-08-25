@@ -98,6 +98,7 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
               video={video}
               timestamp={timestamp}
               backend={backend}
+              focused={focused}
             />
           </Pressable>
         </Link>

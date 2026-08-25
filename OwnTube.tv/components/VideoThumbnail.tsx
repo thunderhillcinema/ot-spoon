@@ -18,11 +18,13 @@ interface VideoThumbnailProps {
   timestamp?: number;
   isVisible?: boolean;
   imageDimensions: { width: number; height: number };
+  // On the couch, the CRT scanlines fade when the card is focused ("powering up").
+  focused?: boolean;
 }
 
 const fallback = require("../assets/thumbnailFallback.png");
 
-export const VideoThumbnail: FC<VideoThumbnailProps> = ({ video, backend, timestamp, imageDimensions }) => {
+export const VideoThumbnail: FC<VideoThumbnailProps> = ({ video, backend, timestamp, imageDimensions, focused }) => {
   const { colors } = useTheme();
   const [isError, setIsError] = useState(false);
   const { t } = useTranslation();
@@ -52,7 +54,7 @@ export const VideoThumbnail: FC<VideoThumbnailProps> = ({ video, backend, timest
         onError={() => setIsError(true)}
       />
       {IS_TV_LAYOUT && imageDimensions.width > 0 && (
-        <CrtScreen width={imageDimensions.width} height={imageDimensions.height} />
+        <CrtScreen width={imageDimensions.width} height={imageDimensions.height} intensity={focused ? 0.35 : 1} />
       )}
       {!!percentageWatched && percentageWatched > 0 && !video.isLive && (
         <View style={[styles.progressContainer, { backgroundColor: colors.white25 }]}>
