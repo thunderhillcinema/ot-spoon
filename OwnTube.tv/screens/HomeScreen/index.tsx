@@ -267,7 +267,7 @@ export const HomeScreen = () => {
           disableVirtualization
           stickySectionHeadersEnabled
           showsVerticalScrollIndicator={false}
-          ListHeaderComponent={IS_TV_LAYOUT ? <TvHero video={heroVideo} backend={backend} /> : undefined}
+          ListHeaderComponent={IS_TV_LAYOUT ? <TvHero video={heroVideo} backend={backend} initialFocus /> : undefined}
           ListFooterComponent={<InfoFooter />}
           style={{
             ...styles.paddingContainer,

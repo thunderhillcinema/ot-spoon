@@ -70,6 +70,47 @@ IS_TV_LAYOUT = (Platform.isTV || TV_PREVIEW) && (TV_ON_AIR_THEME || TV_PREVIEW)
   rails, but a page with an explicit grid/list toggle (playlist/category) keeps a
   real wrapping grid via `forceGrid` (`VideoGrid.tsx` → `VideoGridContent.tsx`).
 
+## D-pad / remote control
+
+TV users navigate with a remote, so every couch element must be a proper focus
+target. Upstream OwnTube ships the focus **engine** (react-native-tvos:
+`TVFocusGuideView`, `hasTVPreferredFocus`, D-pad events) but no distinctive 10-foot
+layout — so the couch treatments have to opt INTO that engine. Status:
+
+- **Video cards** — already remote-ready: `VideoGridCard` wires
+  `onFocus/onBlur → setFocused` under `IS_TV_LAYOUT`, so the native engine drives
+  the amber glow / scale / scanline-tune on the focused tile. The hover path is
+  additive for the web preview only.
+- **Horizontal rows** — on native TV they render as a horizontal `FlatList`, and
+  each is wrapped in upstream's `<TVFocusGuideView autoFocus>` (`VideoGrid.tsx`),
+  so pressing into a row auto-lands on a card and the D-pad scrolls it natively.
+- **Heroes (page + section)** — now focusable targets with real feedback
+  (`ae5040e`): `TvHero` wires `onFocus/onBlur` to the same "active" state hover
+  drives, so on a remote the hero brightens, its scanlines tune in, and an amber
+  channel-frame lights up (a constant-width transparent border, so focus never
+  shifts layout). SELECT opens its destination.
+- **Initial focus** — the PAGE hero claims `hasTVPreferredFocus` (`initialFocus`
+  prop, set only on the `ListHeaderComponent` instance, never on section heroes),
+  giving the remote a defined content-first entry point on mount. The home had
+  none before.
+- **Marquees / "CH NN" headers** — deliberately non-focusable on TV
+  (`isLinkVisible = link && !Platform.isTV`), so they add no dead focus stops.
+
+### Needs a real device to verify (the web preview CANNOT)
+
+react-native-web has **no TV focus engine** — the preview drives everything from
+hover, so arrow keys do nothing there and never will. The preview validates the
+LOOK, not the focus behaviour. Two things only a simulator/TV build exercises:
+
+1. **Focus feedback** on each element (the wiring above) — confirm the remote
+   lands visibly on the hero and cards.
+2. **Focus ORDER** — how the spatial-nav engine moves up/down through the
+   SectionList's stack of heroes + horizontal rows. It routes geometrically; a
+   tall column of mixed heights CAN misroute. Deliberately **not** shepherded
+   with an extra `TVFocusGuideView` yet — adding guides blind risks making
+   correct nav worse. If the simulator shows misrouting, the remedy is a
+   `TVFocusGuideView` (`destinations=`) around the home content.
+
 ## Deliberately NOT done (and why)
 
 - **9:16 portrait posters (Netflix look):** PeerTube serves 16:9 video stills, not

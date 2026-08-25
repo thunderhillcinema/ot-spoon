@@ -31,6 +31,7 @@ export const TvHero = ({
   title,
   subtitle,
   onPress,
+  initialFocus,
 }: {
   video?: GetVideosVideo;
   backend?: string;
@@ -42,6 +43,10 @@ export const TvHero = ({
   title?: string;
   subtitle?: string;
   onPress?: () => void;
+  // Claim the remote's initial focus on mount. Set on the PAGE hero only (the
+  // couch home's content-first entry point) — never on the section heroes, or
+  // they fight over first focus.
+  initialFocus?: boolean;
 }) => {
   const { colors } = useTheme();
   const { height } = useWindowDimensions();
@@ -102,6 +107,7 @@ export const TvHero = ({
 
   return (
     <Pressable
+      hasTVPreferredFocus={IS_TV_LAYOUT && !!initialFocus}
       onPress={handlePress}
       onFocus={IS_TV_LAYOUT ? handleFocus : undefined}
       onBlur={IS_TV_LAYOUT ? handleBlur : undefined}
