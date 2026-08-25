@@ -4,6 +4,7 @@ import { Link, useLocalSearchParams } from "expo-router";
 import { Platform, StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useBreakpoints } from "../../../hooks";
+import { IS_TV_LAYOUT } from "../../../utils/tvPreview";
 
 interface SectionHeaderProps {
   title: string;
@@ -33,12 +34,18 @@ export const SectionHeader = ({ title, link }: SectionHeaderProps) => {
       <View
         style={[
           {
-            borderLeftColor: colors.theme200,
+            // On-air accent bar — amber on the couch (broadcast-lineup feel).
+            borderLeftColor: IS_TV_LAYOUT ? colors.theme500 : colors.theme200,
           },
           styles.textContainer,
         ]}
       >
-        <Typography style={styles.text} color={colors.theme950} fontSize="sizeXL" fontWeight="ExtraBold">
+        <Typography
+          style={[styles.text, IS_TV_LAYOUT && styles.textTV]}
+          color={colors.theme950}
+          fontSize="sizeXL"
+          fontWeight="ExtraBold"
+        >
           {title}
         </Typography>
       </View>
@@ -65,4 +72,6 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     paddingLeft: spacing.lg,
   },
+  // On-air broadcast label: uppercase, wide tracking.
+  textTV: { letterSpacing: 3, textTransform: "uppercase" },
 });

@@ -12,6 +12,7 @@ import { forwardRef, useMemo, useState } from "react";
 import TVFocusGuideHelper from "./helpers/TVFocusGuideHelper";
 import { FocusGuide } from "./helpers";
 import { VideoItemFooter } from "./VideoItemFooter";
+import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../utils/tvPreview";
 
 interface VideoGridCardProps {
   video: GetVideosVideo;
@@ -32,12 +33,23 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
   }, [video, backend, timestamp]);
 
   const thumbnailLinkStyles = useMemo(() => {
-    return [styles.linkWrapper, ...(Platform.isTV ? [styles.linkWrapperTV] : [{}])];
+    return [styles.linkWrapper, ...(IS_TV_LAYOUT ? [styles.linkWrapperTV] : [{}])];
   }, []);
 
   // THC on-air focus (10-foot): the focused tile lifts, scales, and casts an amber
-  // glow — the streaming-standard cue, replacing the flat border. TV-only.
-  const isTvFocused = Platform.isTV && focused;
+  // glow — the streaming-standard cue, replacing the flat border. Renders on TV and
+  // in the web TV-preview (IS_TV_LAYOUT).
+  const isTvFocused = IS_TV_LAYOUT && focused;
+
+  // In the web preview there's no D-pad, so drive focus from hover.
+  const handleHoverIn = () => {
+    toggleHovered();
+    if (IS_TV_PREVIEW_WEB) setFocused(true);
+  };
+  const handleHoverOut = () => {
+    toggleHovered();
+    if (IS_TV_PREVIEW_WEB) setFocused(false);
+  };
   const tvFocusStyle = useMemo(
     () => ({
       transform: [{ scale: 1.08 }],
@@ -57,12 +69,12 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
   return (
     <View style={[styles.container, isTvFocused && tvFocusStyle]}>
       <Pressable
-        onFocus={Platform.isTV ? () => setFocused(true) : null}
-        onBlur={Platform.isTV ? () => setFocused(false) : null}
+        onFocus={IS_TV_LAYOUT ? () => setFocused(true) : null}
+        onBlur={IS_TV_LAYOUT ? () => setFocused(false) : null}
         style={styles.pressableContainer}
         onPress={Platform.isTV || Platform.OS === "web" ? handleTvNavigateToVideo : null}
-        onHoverIn={toggleHovered}
-        onHoverOut={toggleHovered}
+        onHoverIn={handleHoverIn}
+        onHoverOut={handleHoverOut}
         ref={ref}
       >
         <Link
