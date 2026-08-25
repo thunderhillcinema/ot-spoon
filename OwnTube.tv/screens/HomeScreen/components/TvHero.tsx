@@ -76,8 +76,9 @@ export const TvHero = ({
   // staying put is what lets the amber glow bloom OUTWARD around a stable anchor.
   const imageBrightness = focus.interpolate({ inputRange: [0, 1], outputRange: [0.82, 1] });
   const imageScale = focus.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] });
-  // Vignette recedes (darker → lighter) as the tube tunes in.
-  const vignetteOpacity = focus.interpolate({ inputRange: [0, 1], outputRange: [0.6, 0.12] });
+  // Vignette eases a touch as the tube tunes in, but stays PRESENT on focus — it
+  // reinforces edge contrast so the brightened center and the amber glow pop.
+  const vignetteOpacity = focus.interpolate({ inputRange: [0, 1], outputRange: [0.6, 0.45] });
 
   const uri = imageUrl ?? video?.previewPath;
   const displayTitle = title ?? video?.name;
