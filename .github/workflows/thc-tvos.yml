@@ -1,0 +1,33 @@
+name: THC tvOS Simulator Build
+
+# Manual trigger that builds ONLY the tvOS simulator .app via OwnTube's reusable
+# build_tvos_simulator_app workflow. It needs NO signing and NO secrets (a
+# simulator build), so it runs on a fresh fork out of the box. The GitHub runner
+# uses Xcode 16.4 (correct for RN 0.76) — so this works even when your local
+# machine only has Xcode 26. Download the artifact and run it on a local tvOS
+# simulator: see thc/TV_SIMULATOR.md.
+#
+# THC branding (on-air palette + curated cinema instances) is already in source
+# (theme/colors.ts, public/featured-instances.json5); the env below adds the app
+# name + dark mode.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_tvos:
+    uses: ./.github/workflows/build_tvos_simulator_app.yml
+    with:
+      build_info: |
+        {
+          "GITHUB_ACTOR": "${{ github.actor }}",
+          "GITHUB_SHA_SHORT": "${{ github.sha }}",
+          "COMMIT_URL": "https://github.com/${{ github.repository }}/commit/${{ github.sha }}",
+          "BUILD_TIMESTAMP": "manual",
+          "GITHUB_REPOSITORY": "${{ github.repository }}",
+          "WEB_URL": ""
+        }
+      customizations_env_content: |
+        EXPO_PUBLIC_APP_NAME=Thunderhill Cinema
+        EXPO_PUBLIC_APP_SLUG=thunderhillcinema
+        EXPO_PUBLIC_USER_INTERFACE_STYLE=dark
