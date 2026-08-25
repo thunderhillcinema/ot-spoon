@@ -29,3 +29,19 @@
 .grid-container-tv::-webkit-scrollbar {
   display: none;
 }
+/* Hovering the row recedes every card; the hovered one stays lit + on top. */
+.grid-container-tv:hover > * {
+  opacity: 0.5;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.grid-container-tv > *:hover {
+  opacity: 1 !important;
+  z-index: 5;
+}
+.grid-container-tv > * {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}

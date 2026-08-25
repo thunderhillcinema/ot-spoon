@@ -58,11 +58,11 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
   };
   const tvFocusStyle = useMemo(
     () => ({
-      transform: [{ scale: 1.08 }],
+      transform: [{ scale: 1.14 }, { translateY: -6 }],
       shadowColor: colors.theme500,
-      shadowOpacity: 0.55,
-      shadowRadius: 18,
-      shadowOffset: { width: 0, height: 10 },
+      shadowOpacity: 0.75,
+      shadowRadius: 28,
+      shadowOffset: { width: 0, height: 14 },
       zIndex: 10,
     }),
     [colors],
