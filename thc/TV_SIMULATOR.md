@@ -22,7 +22,7 @@ Xcode 16.4 — no secrets needed. When green, download the artifact
 One-time: install a tvOS simulator runtime (you have iOS, tvOS is separate) —
 Xcode ▸ Settings ▸ Components, or `xcodebuild -downloadPlatform tvOS`.
 
-Then, on your Mac (Xcode 26 is fine here — it only *runs* the sim):
+Then, on your Mac (Xcode 26 is fine here — it only _runs_ the sim):
 
 ```
 # boot an Apple TV simulator (list names with: xcrun simctl list devices tvOS)

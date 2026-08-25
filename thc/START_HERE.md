@@ -37,7 +37,7 @@ transcoder / storage / billing repos as a reference architecture for the host.
   stays net-new work; smart-TV browser + existing `/tv` remain the fallback there.
 - **Aggregator confirmed native:** `backend` route param + `instances.joinpeertube.org`
   search (up to 1000 instances). THC stays an aggregator of PeerTube it does NOT
-  host; our own instance is an *additional* deeper sphere. Keep both — do not
+  host; our own instance is an _additional_ deeper sphere. Keep both — do not
   narrow to own-instance-only.
 
 ## Your likely first tasks (confirm which with the user before diving in)
@@ -68,7 +68,7 @@ and either `ot-spoon` is contaminated or a public `pt-knife` violates AGPL.
 ### What AGPL means for modifying PeerTube
 
 - **AGPL's distinguishing clause is §13 (network use).** Plain GPL triggers only on
-  *distributing a binary*; AGPL adds: **running a MODIFIED version on a server that
+  _distributing a binary_; AGPL adds: **running a MODIFIED version on a server that
   users reach over a network counts as distribution.** PeerTube is exactly that, so
   §13 is live the moment we run a modified public instance.
 - **You may modify PeerTube freely** — any purpose, commercial included — and owe
@@ -79,14 +79,14 @@ and either `ot-spoon` is contaminated or a public `pt-knife` violates AGPL.
   "prominent offer" — a source link in the UI/footer; a public `pt-knife` that
   matches the deployed build satisfies it); (2) **license those core modifications
   AGPL-3.0-or-later** (can't be made proprietary while served); (3) **keep
-  notices + state your changes.** You owe the *code* only — not content, users, or
+  notices + state your changes.** You owe the _code_ only — not content, users, or
   business model.
 
 ### The firewall — where AGPL stops
 
 - **The REST API is the license boundary.** A separate program communicating with
   AGPL software at arm's length over a network API is **NOT a derivative work** and
-  does **NOT** inherit AGPL. That is *why* OwnTube's client is Unlicense against an
+  does **NOT** inherit AGPL. That is _why_ OwnTube's client is Unlicense against an
   AGPL backend — we inherit the same clean line. **Keep `ot-spoon` behind the API;
   never pull PeerTube source into it** (AGPL→Unlicense relicensing is a violation,
   and the incompatibility is one-directional).
@@ -135,9 +135,9 @@ commercial/premium tier — confirm with counsel before shipping.
 ## ABANDONED — do not resurrect
 
 - The **native THC PeerTube-only `/tv` variant**: a new `live_action` on `TVHomeLive`
-  + a pure video-provider classifier filtering `Posts.list_filtered_posts`. It was the
-  plan for ~20 minutes, then superseded by adopting OwnTube. No code was written.
-  Don't rebuild it — the TV client is a separate RN app hitting PeerTube's API.
+  - a pure video-provider classifier filtering `Posts.list_filtered_posts`. It was the
+    plan for ~20 minutes, then superseded by adopting OwnTube. No code was written.
+    Don't rebuild it — the TV client is a separate RN app hitting PeerTube's API.
 
 ---
 

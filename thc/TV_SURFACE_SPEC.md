@@ -7,9 +7,9 @@ What THC's TV app should be, on top of OwnTube's shipped surface
 
 ## North star
 
-**Lead with curation, not primitives.** OwnTube's home rails are *structural*
+**Lead with curation, not primitives.** OwnTube's home rails are _structural_
 (Latest / Channels / Categories = raw PeerTube objects). THC's entire
-differentiator is *curation* — compilations, venues/cinemas, Red Carpet taste,
+differentiator is _curation_ — compilations, venues/cinemas, Red Carpet taste,
 live premieres. The couch app should feel like walking into a cinema someone
 programmed, not a file browser of an instance. This is also what the streaming
 research says users expect: a **hero/spotlight up top, then editorial/personalized
@@ -23,7 +23,7 @@ shelves** — not an undifferentiated grid.
   unmistakable cue: scale ~1.05–1.1×, elevation/shadow, and ideally an audio tick;
   body type readable at ~3m.
 - **Dynamic Top Shelf** (tvOS): deep-linked, frequently-refreshed featured content
-  — *not* a static banner; each item opens its own content.
+  — _not_ a static banner; each item opens its own content.
 - Apple TV leans **editorial/lean** over exhaustive; that suits THC's curated posture.
 
 Sources: [Smashing — Designing for TV](https://www.smashingmagazine.com/2025/09/designing-tv-principles-patterns-practical-guidance/),
@@ -32,13 +32,13 @@ Sources: [Smashing — Designing for TV](https://www.smashingmagazine.com/2025/0
 
 ## Gap analysis — OwnTube today vs. the conventions
 
-| Convention | OwnTube ships | Gap / THC opportunity |
-|---|---|---|
-| Hero/spotlight at top | ❌ home opens straight into rails | Add a hero row: THC premiere / live / featured cinema |
-| Editorial/personalized rows first | ❌ structural rows (Latest/Channels/Cats) | THC curation rows (below) |
-| Focus cue = scale + elevation | ~ border-only on cards (`Picker.tv`, `TvKeyboard`); scale only on player buttons (`INTERFACE_SCALE`) | Add scale/elevation on poster cards |
-| Dynamic Top Shelf (deep-linked, fresh) | ❌ static `topShelf` image asset only (`app.config.ts:79`) | `TVTopShelfContentProvider` fed by THC featured content |
-| Auto-play preview on focus | ❌ | Optional, later — bandwidth/again design call |
+| Convention                             | OwnTube ships                                                                                        | Gap / THC opportunity                                   |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Hero/spotlight at top                  | ❌ home opens straight into rails                                                                    | Add a hero row: THC premiere / live / featured cinema   |
+| Editorial/personalized rows first      | ❌ structural rows (Latest/Channels/Cats)                                                            | THC curation rows (below)                               |
+| Focus cue = scale + elevation          | ~ border-only on cards (`Picker.tv`, `TvKeyboard`); scale only on player buttons (`INTERFACE_SCALE`) | Add scale/elevation on poster cards                     |
+| Dynamic Top Shelf (deep-linked, fresh) | ❌ static `topShelf` image asset only (`app.config.ts:79`)                                           | `TVTopShelfContentProvider` fed by THC featured content |
+| Auto-play preview on focus             | ❌                                                                                                   | Optional, later — bandwidth/again design call           |
 
 ## THC domain → TV rails (the mapping that decides thin vs. thick)
 
@@ -47,17 +47,17 @@ publish it as that primitive and vanilla OwnTube renders it as a rail **for free
 (the spine's "style our curation, don't build an app" thesis). If no, it's net-new
 `.tv.tsx` + a THC API call.
 
-| THC structure | PeerTube primitive | Path | Effort |
-|---|---|---|---|
-| Compilation / print (curated reel) | **Playlist** | Publish pipeline → playlist → renders as a home rail | THIN (config + Phase 1 publish) |
-| Venue / cinema / creator | **Channel** | Publish → channel → "Channels" rail + channel page | THIN |
-| Live premiere / broadcast | **Live video** (`isLive`) | Already a home rail (`HomeScreen:55-76`) | THIN (needs THC live → PeerTube live) |
-| Category / genre | **Category** | Native rail | THIN |
-| **Red Carpet / taste feed** | *(none)* | Net-new rail pulling a THC-curated ordering | THICK (`.tv.tsx` + THC API, or a synthesized "editorial" playlist) |
-| **Hero / spotlight** | *(none native)* | Net-new hero row component | THICK |
-| **Dynamic Top Shelf** | *(none)* | `TVTopShelfContentProvider` (tvOS native) | THICK |
+| THC structure                      | PeerTube primitive        | Path                                                 | Effort                                                             |
+| ---------------------------------- | ------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------ |
+| Compilation / print (curated reel) | **Playlist**              | Publish pipeline → playlist → renders as a home rail | THIN (config + Phase 1 publish)                                    |
+| Venue / cinema / creator           | **Channel**               | Publish → channel → "Channels" rail + channel page   | THIN                                                               |
+| Live premiere / broadcast          | **Live video** (`isLive`) | Already a home rail (`HomeScreen:55-76`)             | THIN (needs THC live → PeerTube live)                              |
+| Category / genre                   | **Category**              | Native rail                                          | THIN                                                               |
+| **Red Carpet / taste feed**        | _(none)_                  | Net-new rail pulling a THC-curated ordering          | THICK (`.tv.tsx` + THC API, or a synthesized "editorial" playlist) |
+| **Hero / spotlight**               | _(none native)_           | Net-new hero row component                           | THICK                                                              |
+| **Dynamic Top Shelf**              | _(none)_                  | `TVTopShelfContentProvider` (tvOS native)            | THICK                                                              |
 
-**Consequence:** most of THC's catalog reaches the couch as *thin* config the
+**Consequence:** most of THC's catalog reaches the couch as _thin_ config the
 moment the Phase 1 publish pipeline emits playlists/channels. The genuinely
 net-new couch work is exactly three things: **hero row, a curated "Red Carpet"
 editorial rail, and a dynamic Top Shelf.** Everything else is data.
@@ -65,14 +65,14 @@ editorial rail, and a dynamic Top Shelf.** Everything else is data.
 ## Proposed THC home (couch), top to bottom
 
 1. **Hero / Now Showing** — one big deep-linked spotlight (today's premiere, or a
-   live broadcast if one is on). *(thick — hero component)*
-2. **Live now** — THC livestreams. *(thin — existing live rail, once THC live
-   publishes as PeerTube live)*
-3. **Red Carpet picks** — THC's curated/taste ordering. *(thick, or thin if we
-   synthesize it as an auto-maintained playlist)*
-4. **Compilations / Reels** — curated playlists. *(thin — publish pipeline)*
-5. **Cinemas / Venues** — channels. *(thin)*
-6. **Recently watched → Categories** — native tail. *(thin)*
+   live broadcast if one is on). _(thick — hero component)_
+2. **Live now** — THC livestreams. _(thin — existing live rail, once THC live
+   publishes as PeerTube live)_
+3. **Red Carpet picks** — THC's curated/taste ordering. _(thick, or thin if we
+   synthesize it as an auto-maintained playlist)_
+4. **Compilations / Reels** — curated playlists. _(thin — publish pipeline)_
+5. **Cinemas / Venues** — channels. _(thin)_
+6. **Recently watched → Categories** — native tail. _(thin)_
 
 ## Focus & feel (small, high-leverage polish)
 

@@ -8,7 +8,7 @@ drawing from `video.blender.org`.
 
 The `carrier` field (THC platform, `/work` — `Post.derive_carrier/1`) stores the
 **same `{instance, video_id}` coordinates** that every consumer keys on. It just
-makes them *first-class* (stored once at write time) instead of re-sniffed from the
+makes them _first-class_ (stored once at write time) instead of re-sniffed from the
 URL on every render. Those coordinates are the bridge between the platform and the
 TV client — they are literally OwnTube's `backend` + `id`.
 
@@ -17,11 +17,11 @@ TV client — they are literally OwnTube's `backend` + `id`.
 Real Blender video — "FASTER Blender! ⚡️ Blender Today LIVE #287",
 short id `dsziDLME4nQwbDANGirroE`:
 
-| Surface | URL it keys on | Verified |
-|---|---|---|
-| **THC post** (author pastes) | `https://video.blender.org/w/dsziDLME4nQwbDANGirroE` | → carrier `peertube` / `https://video.blender.org` |
-| **Existing THC `/tv`** (`tv_watch_live.ex:230`) | `https://video.blender.org/videos/embed/<id>` | HTTP 200 |
-| **OwnTube couch** (deep-link) | `/video?backend=video.blender.org&id=<id>` → `/api/v1/videos/<id>` | resolves, 2 HLS files, playable |
+| Surface                                         | URL it keys on                                                     | Verified                                           |
+| ----------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------- |
+| **THC post** (author pastes)                    | `https://video.blender.org/w/dsziDLME4nQwbDANGirroE`               | → carrier `peertube` / `https://video.blender.org` |
+| **Existing THC `/tv`** (`tv_watch_live.ex:230`) | `https://video.blender.org/videos/embed/<id>`                      | HTTP 200                                           |
+| **OwnTube couch** (deep-link)                   | `/video?backend=video.blender.org&id=<id>` → `/api/v1/videos/<id>` | resolves, 2 HLS files, playable                    |
 
 Same instance, same id, three renderers. The carrier field is the one place that
 now names them as data.
@@ -44,7 +44,7 @@ OwnTube deployment to point `backend`-less relative links at yet (see
 
 - **No new bytes, no new infra.** THC already consumes Blender's PeerTube; OwnTube
   already browses Blender; the carrier field makes the handoff explicit. The whole
-  aggregator loop is real *today*, on one production row.
+  aggregator loop is real _today_, on one production row.
 - **It's the thin path made concrete.** When THC publishes its OWN content to
   pt-knife (Phase 1 publish pipeline), those posts get `carrier: peertube` +
   `carrier_instance: <thc host>` by the same `derive_carrier/1`, and the same
