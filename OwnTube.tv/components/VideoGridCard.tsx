@@ -194,13 +194,14 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   linkWrapper: { flex: 1 },
-  // Recessed tube: dark screen bed inset by a black bezel ring.
+  // Recessed tube: dark screen bed inset by a black bezel ring. No height:"100%" —
+  // the thumbnail carries its own explicit height, and height:"100%" collapses the
+  // wrapper on web (indefinite parent), which broke the card's height flow.
   linkWrapperTV: {
     backgroundColor: CABINET.screen,
     borderColor: CABINET.bezel,
     borderRadius: 10,
     borderWidth: 2,
-    height: "100%",
     width: "100%",
   },
   pressableContainer: { gap: spacing.md },
