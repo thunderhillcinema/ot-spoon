@@ -35,12 +35,27 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
     return [styles.linkWrapper, ...(Platform.isTV ? [styles.linkWrapperTV] : [{}])];
   }, []);
 
+  // THC on-air focus (10-foot): the focused tile lifts, scales, and casts an amber
+  // glow — the streaming-standard cue, replacing the flat border. TV-only.
+  const isTvFocused = Platform.isTV && focused;
+  const tvFocusStyle = useMemo(
+    () => ({
+      transform: [{ scale: 1.08 }],
+      shadowColor: colors.theme500,
+      shadowOpacity: 0.55,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 10 },
+      zIndex: 10,
+    }),
+    [colors],
+  );
+
   const handleTvNavigateToVideo = () => {
     router.navigate(linkHref);
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isTvFocused && tvFocusStyle]}>
       <Pressable
         onFocus={Platform.isTV ? () => setFocused(true) : null}
         onBlur={Platform.isTV ? () => setFocused(false) : null}

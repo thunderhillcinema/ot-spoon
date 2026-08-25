@@ -27,7 +27,7 @@ export const FocusGuide = ({ width, height }: SvgProps) => {
           rx={String(BORDER_WIDTH * 2)}
           ry={String(BORDER_WIDTH * 2)}
           fill="none"
-          stroke={colors.theme950}
+          stroke={colors.theme500}
           strokeWidth={String(BORDER_WIDTH)}
         />
       </Svg>
