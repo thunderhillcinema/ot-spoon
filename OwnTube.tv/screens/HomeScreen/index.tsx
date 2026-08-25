@@ -98,41 +98,55 @@ export const HomeScreen = () => {
     return [
       {
         title: t("liveStreams"),
-        featured: liveVideosData?.[0],
         renderItem: () => (
-          <VideoGrid
-            scrollable={showHorizontalScrollableLists}
-            isTVActionCardHidden={true}
-            isHeaderHidden
-            data={liveVideosData}
-          />
+          <>
+            {IS_TV_LAYOUT && liveVideosData?.[0] && (
+              <TvHero video={liveVideosData[0]} backend={backend} compact kicker={t("liveStreams")} />
+            )}
+            <VideoGrid
+              scrollable={showHorizontalScrollableLists}
+              isTVActionCardHidden={true}
+              isHeaderHidden
+              data={liveVideosData}
+            />
+          </>
         ),
         data: ["dataItemPlaceholder"],
         isVisible: Number(liveVideosData?.length) > 0,
       },
       {
         title: t("latestVideos"),
-        featured: heroVideo,
-        renderItem: () => <LatestVideosView />,
+        renderItem: () => (
+          <>
+            {IS_TV_LAYOUT && heroVideo && (
+              <TvHero video={heroVideo} backend={backend} compact kicker={t("latestVideos")} />
+            )}
+            <LatestVideosView />
+          </>
+        ),
         data: ["dataItemPlaceholder"],
         isVisible: true,
       },
       {
         title: isMobile ? t("recentlyWatchedAbbr") : t("recentlyWatched"),
         link: { text: t("viewHistory"), route: `/${ROUTES.HISTORY}` },
-        featured: historyData?.[0],
         renderItem: () => (
-          <VideoGrid
-            scrollable={showHorizontalScrollableLists}
-            link={
-              Platform.isTV
-                ? { text: t("viewHistory"), href: { pathname: `/${ROUTES.HISTORY}`, params: { backend } } }
-                : undefined
-            }
-            isHeaderHidden
-            data={historyData}
-            variant="history"
-          />
+          <>
+            {IS_TV_LAYOUT && historyData?.[0] && (
+              <TvHero video={historyData[0]} backend={backend} compact kicker={t("recentlyWatched")} />
+            )}
+            <VideoGrid
+              scrollable={showHorizontalScrollableLists}
+              link={
+                Platform.isTV
+                  ? { text: t("viewHistory"), href: { pathname: `/${ROUTES.HISTORY}`, params: { backend } } }
+                  : undefined
+              }
+              isHeaderHidden
+              data={historyData}
+              variant="history"
+            />
+          </>
         ),
         data: ["dataItemPlaceholder"],
         isVisible: historyData.length > 0,
@@ -228,8 +242,7 @@ export const HomeScreen = () => {
             <SectionHeader
               title={section.title}
               link={section.link}
-              featured={"featured" in section ? section.featured : undefined}
-              channelNo={sections.findIndex((s) => s.title === section.title) + 2}
+              channelNo={sections.findIndex((s) => s.title === section.title) + 1}
             />
           )}
         />
