@@ -11,12 +11,17 @@ import { CrtScreen } from "../../../components/helpers";
 import { spacing } from "../../../theme";
 import { GetVideosVideo } from "../../../api/models";
 import { ROUTES } from "../../../types";
+import { IS_TV_LAYOUT, IS_TV_PREVIEW_WEB } from "../../../utils/tvPreview";
 
 // On-air scrim — near-black fading up/right off the backdrop, for legibility.
 const SCRIM = ["rgba(11,13,14,0.96)", "rgba(11,13,14,0.55)", "rgba(11,13,14,0)"] as const;
 
+// Idle colour of the always-present focus frame (lit amber when active).
+const IDLE_FRAME = "transparent";
+
 // TvHero — the featured spotlight at the top of the couch home. Big backdrop +
-// on-air "NOW SHOWING" kicker + title + channel. Clicking opens the video.
+// on-air "NOW SHOWING" kicker + title + channel. Clicking (or pressing SELECT on
+// a remote) opens the video/destination.
 export const TvHero = ({
   video,
   backend,
@@ -43,17 +48,20 @@ export const TvHero = ({
   const router = useRouter();
 
   const [heroWidth, setHeroWidth] = useState(0);
-  const [hovered, setHovered] = useState(false);
+  // "active" = the hero is the current focus target. On a real TV the native focus
+  // engine drives this via onFocus/onBlur (a remote never fires hover); in the web
+  // preview there's no D-pad, so hover stands in. Mirrors VideoGridCard.
+  const [active, setActive] = useState(false);
 
-  // Smooth brightness fade on hover (0.82 → 1).
+  // Smooth brightness fade when active (0.82 → 1) — the picture "tunes in".
   const brightness = useRef(new Animated.Value(0.82)).current;
   useEffect(() => {
     Animated.timing(brightness, {
-      toValue: hovered ? 1 : 0.82,
+      toValue: active ? 1 : 0.82,
       duration: 260,
       useNativeDriver: true,
     }).start();
-  }, [hovered, brightness]);
+  }, [active, brightness]);
 
   const uri = imageUrl ?? video?.previewPath;
   const displayTitle = title ?? video?.name;
@@ -68,16 +76,49 @@ export const TvHero = ({
     onPress ??
     (video ? () => router.navigate({ pathname: `/${ROUTES.VIDEO}`, params: { id: video.uuid, backend } }) : undefined);
 
+  // Focus drives active on TV; hover drives it in the web preview.
+  const handleFocus = () => setActive(true);
+  const handleBlur = () => setActive(false);
+  const handleHoverIn = () => {
+    if (IS_TV_PREVIEW_WEB) setActive(true);
+  };
+  const handleHoverOut = () => {
+    if (IS_TV_PREVIEW_WEB) setActive(false);
+  };
+
+  // On-air focus cue: an amber channel-frame around the tuned-in hero (clearer on
+  // a remote than the brightness lift alone). TV/preview only. The border is
+  // always present (transparent when idle) so lighting it up never shifts layout.
+  const focusFrame =
+    IS_TV_LAYOUT && active
+      ? {
+          borderColor: colors.theme500,
+          shadowColor: colors.theme500,
+          shadowOffset: { height: 0, width: 0 },
+          shadowOpacity: 0.6,
+          shadowRadius: 24,
+        }
+      : null;
+
   return (
-    <Pressable onPress={handlePress} onHoverIn={() => setHovered(true)} onHoverOut={() => setHovered(false)}>
-      <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
+    <Pressable
+      onPress={handlePress}
+      onFocus={IS_TV_LAYOUT ? handleFocus : undefined}
+      onBlur={IS_TV_LAYOUT ? handleBlur : undefined}
+      onHoverIn={handleHoverIn}
+      onHoverOut={handleHoverOut}
+    >
+      <View
+        style={[styles.hero, { height: heroHeight }, focusFrame]}
+        onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}
+      >
         <AnimatedImage
           source={source}
           style={[StyleSheet.absoluteFill, { opacity: brightness }]}
           contentFit="cover"
           transition={200}
         />
-        {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={0.4} />}
+        {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={active ? 0.35 : 0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
         <View style={styles.content}>
           <View style={styles.kickerRow}>
@@ -108,7 +149,14 @@ export const TvHero = ({
 
 const styles = StyleSheet.create({
   content: { bottom: 0, gap: spacing.sm, left: 0, padding: spacing.xl, position: "absolute", right: 0, zIndex: 2 },
-  hero: { justifyContent: "flex-end", marginBottom: spacing.lg, overflow: "hidden", width: "100%" },
+  hero: {
+    borderColor: IDLE_FRAME,
+    borderWidth: 3,
+    justifyContent: "flex-end",
+    marginBottom: spacing.lg,
+    overflow: "hidden",
+    width: "100%",
+  },
   kicker: { letterSpacing: 3 },
   kickerRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
   tally: {
