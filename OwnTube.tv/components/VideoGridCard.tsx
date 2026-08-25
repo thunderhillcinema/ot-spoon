@@ -19,6 +19,17 @@ interface VideoGridCardProps {
   backend?: string;
 }
 
+// CRT cabinet material — deliberately fixed dark (a television is dark regardless
+// of theme), so it lives outside the theme tokens.
+const CABINET = {
+  shell: "#17191B",
+  border: "#0A0C0D",
+  highlight: "#2B2E30",
+  shadow: "#000000",
+  screen: "#05070A",
+  bezel: "#000000",
+};
+
 export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, backend }, ref) => {
   const { isDesktop } = useBreakpoints();
   const { colors } = useTheme();
@@ -67,7 +78,7 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
   };
 
   return (
-    <View style={[styles.container, isTvFocused && tvFocusStyle]}>
+    <View style={[styles.container, IS_TV_LAYOUT && styles.cabinetTV, isTvFocused && tvFocusStyle]}>
       <Pressable
         onFocus={IS_TV_LAYOUT ? () => setFocused(true) : null}
         onBlur={IS_TV_LAYOUT ? () => setFocused(false) : null}
@@ -131,6 +142,23 @@ export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, back
 VideoGridCard.displayName = "VideoGridCard";
 
 const styles = StyleSheet.create({
+  // TV cabinet: the whole item is a television — dark shell, rounded corners, a
+  // top highlight edge, a bezel (padding) around the screen, and a lower front
+  // panel (paddingBottom) that holds the title + detail. On-air dark, deliberate.
+  cabinetTV: {
+    backgroundColor: CABINET.shell,
+    borderColor: CABINET.border,
+    borderRadius: 16,
+    borderTopColor: CABINET.highlight,
+    borderWidth: 1,
+    gap: spacing.sm,
+    padding: spacing.sm,
+    paddingBottom: spacing.md,
+    shadowColor: CABINET.shadow,
+    shadowOffset: { height: 14, width: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 22,
+  },
   container: {
     flex: 0,
     gap: spacing.sm,
@@ -138,8 +166,12 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   linkWrapper: { flex: 1 },
+  // Recessed tube: dark screen bed inset by a black bezel ring.
   linkWrapperTV: {
+    backgroundColor: CABINET.screen,
+    borderColor: CABINET.bezel,
     borderRadius: 10,
+    borderWidth: 2,
     height: "100%",
     width: "100%",
   },
