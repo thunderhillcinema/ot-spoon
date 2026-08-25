@@ -1,252 +1,45 @@
+// THC (Thunderhill Cinema) preview curation — cinema/film/art-leaning public
+// PeerTube instances, drawing from EXISTING instances (aggregator model). Probed
+// reachable 2026-08-25. This is a preview list for the web spike; the canonical
+// branded app (cust-app-thc) will own the real curation + a THC primary backend.
 [
   {
-    name: "XR Tube",
-    description: "The PeerTube platform of Extinction Rebellion.",
-    hostname: "tube.rebellion.global",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/tube.rebellion.global.png",
+    name: "Cinema — PeerTube Uno",
+    description: "Italian film & cinema — full features and a dedicated cinema channel.",
+    hostname: "peertube.uno",
     customizations: {
-      refreshQueriesStaleTimeMs: 10000,
+      pageTitle: "Thunderhill Cinema",
       homeLatestPublishedVideoCount: 12,
-      homeRecentlyWatchedVideoCount: 4,
-      homeHideChannelsOverview: false,
-      homeHideCategoriesOverview: false,
-      homeHidePlaylistsOverview: true,
-      homeMaxChannelsOverviewLimit: 4,
-      menuExternalLinks: [
-        {
-          label: "What is XR?",
-          url: "https://rebellion.global/about-us/",
-        },
-        {
-          label: "Get Involved",
-          url: "https://rebellion.global/get-involved/",
-        },
-        {
-          label: "Global Newsletter",
-          url: "https://actionnetwork.org/forms/newsletter-sign-up-17/",
-        },
-        {
-          label: "Donate",
-          url: "https://rebellion.global/donate/",
-        },
-      ],
+      homeUseHorizontalListsForMobilePortrait: true,
     },
   },
   {
-    name: "Blender",
-    description: "Videos presenting the evolutions of the 3D creation software, tutorials and animated films supported by the Blender Foundation.",
+    name: "Blender Films",
+    description: "Open movies, tutorials and animated shorts from the Blender Foundation.",
     hostname: "video.blender.org",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/video.blender.org.jpg",
     customizations: {
-      pageTitle: "Blender Tube",
+      pageTitle: "Thunderhill Cinema — Blender",
       homeUseHorizontalListsForMobilePortrait: true,
-      menuExternalLinks: [
-        {
-          label: "Website",
-          url: "https://www.blender.org",
-        },
-        {
-          label: "Blender Foundation",
-          url: "https://www.blender.org/about/foundation/",
-        },
-        {
-          label: "Merch Store",
-          url: "https://store.blender.org",
-        },
-        {
-          label: "Donate",
-          url: "https://fund.blender.org",
-        },
-      ],
     },
+  },
+  {
+    name: "Spectra Video",
+    description: "A large general-interest catalogue for browsing and discovery.",
+    hostname: "spectra.video",
+  },
+  {
+    name: "MakerTube",
+    description: "Makers, musicians, artists and DIY creators.",
+    hostname: "makertube.net",
+  },
+  {
+    name: "Kolektiva Media",
+    description: "Documentary, activist and independent moving image.",
+    hostname: "kolektiva.media",
   },
   {
     name: "TILvids",
-    description: "A video community focused on sharing best content at the crossroads of education and entertainment, made by some of the best independent creators.",
+    description: "Educational and explainer videos.",
     hostname: "tilvids.com",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/tilvids.com.jpg",
-    customizations: {
-      loginWithUsernameAndPassword: true,
-      loginAccessTokenExpirationOverride: 10,
-      loginRefreshTokenExpirationOverride: 30,
-    },
-  },
-  {
-    name: "Beeld & Geluid",
-    description: "Netherland Museum for media culture, Beeld & Geluid offers online access to audiovisual archive collections to stimulate creative reuse.",
-    hostname: "peertube.beeldengeluid.nl",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/peertube.beeldengeluid.nl.jpg",
-  },
-  {
-    name: "Privacy International",
-    description: "Videos presenting excessive state and corporate surveillance issues and advices on how to increase security and freedom through better privacy.",
-    hostname: "media.privacyinternational.org",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/media.privacyinternational.org.jpg",
-    customizations: {
-      pageTitle: "Privacy International",
-      menuExternalLinks: [
-        {
-          label: "Website",
-          url: "https://privacyinternational.org/",
-        },
-        {
-          label: "Newsletter",
-          url: "https://action.privacyinternational.org/user/register",
-        },
-        {
-          label: "Donate",
-          url: "https://action.privacyinternational.org/civicrm/contribute/transact?reset=1&id=1",
-        },
-      ],
-    },
-  },
-  {
-    name: "Basspistol",
-    description: "Video platform for the Underground Artists sharing their music under free license.",
-    hostname: "v.basspistol.org",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/v.basspistol.org.png",
-    customizations: {
-      pageDefaultTheme: "dark",
-      menuHideChannelsButton: true,
-      menuExternalLinks: [
-        {
-          label: "Website",
-          url: "https://www.basspistol.com/",
-        },
-        {
-          label: "Shop",
-          url: "https://shop.basspistol.com/",
-        },
-        {
-          label: "Radio",
-          url: "https://radio.basspistol.com/public/basspistol",
-        },
-      ],
-    },
-  },
-  {
-    name: "PeerTube Nightly",
-    description: "PeerTube instance with the bleeding edge changes",
-    hostname: "peertube2.cpy.re",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/peertube2.cpy.re.png",
-    customizations: {
-      loginWithUsernameAndPassword: true,
-      menuExternalLinks: [
-        {
-          label: "PeerTube Website",
-          url: "https://joinpeertube.org",
-        },
-        {
-          label: "Open Source @ GitHub",
-          url: "https://github.com/Chocobozzz/PeerTube",
-        },
-        {
-          label: "Support PeerTube",
-          url: "https://support.joinpeertube.org/en/",
-        },
-      ],
-    },
-  },
-  {
-    name: "Fedi.Video",
-    description: "This site is intended as a safe, easy-to-use way to search and browse the PeerTube network. Accounts are only listed here if they are run responsibly and create good videos. Anything involving bigotry, conspiracy theories, NSFW or junk content is not allowed.",
-    hostname: "fedi.video",
-    logoUrl: "https://fedi.video/lazy-static/avatars/02f93071-79de-43d5-8a8f-e4ed5a39345c.png",
-    customizations: {
-      hideVideoSiteLinks: true,
-    },
-  },
-  {
-    name: "LinuxRocks",
-    description: "We welcome everyone on LinuxRocks, regardless of race, religion or orientation. We welcome debates and conversations, but we do not tolerate personal attacks. The core belief is that we should learn from each other's differences and ideologies.",
-    hostname: "peertube.linuxrocks.online",
-  },
-  {
-    name: "urbanists.video",
-    description: "Showing is more effective than telling. Check out where people are championing walkable, livable places through video around the world. \uD83C\uDF0D",
-    hostname: "urbanists.video",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/urbanists.video.png",
-  },
-  {
-    name: "Swebbtv Play",
-    description: "Svensk Webbtelevision är ett medborgarfinansierat initiativ för att skapa en regelbunden och allsidig nyhets- och informationsförmedling.",
-    hostname: "swebbtv.se",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/swebbtv.se.png",
-    customizations: {
-      loginWithUsernameAndPassword: true,
-      pageTitle: "Swebbtv Play",
-      pageDefaultTheme: "light",
-      menuHideHistoryButton: false,
-      menuHideChannelsButton: true,
-      menuHidePlaylistsButton: false,
-      menuHideCategoriesButton: true,
-      menuHideLeaveButton: true,
-      menuExternalLinks: [
-        {
-          label: "Om Swebbtv",
-          url: "https://nyheter.swebbtv.se/om-oss/",
-        },
-        {
-          label: "Bli medlem",
-          url: "https://videos.swtv.se/p/premium",
-        },
-        {
-          label: "Nyhetssajt",
-          url: "https://nyheter.swebbtv.se/",
-        },
-        {
-          label: "Butik",
-          url: "https://butik.swebbtv.se/",
-        },
-      ],
-      playlistsHidden: [
-        "156",
-        "253",
-        "277",
-        "279",
-        "281",
-        "646",
-        "672",
-        "675",
-        "4535",
-        "4536",
-        "4537",
-        "4538",
-        "5153",
-        "5420",
-        "5421",
-        "5419",
-        "6566",
-        "6558",
-        "6567",
-        "9433",
-        "10562",
-        "10796",
-        "10857",
-        "12491",
-        "13426",
-        "13568",
-        "16633",
-        "15549",
-      ],
-      playlistsShowHiddenButton: false,
-      homeUseHorizontalListsForMobilePortrait: true,
-      homeLatestPublishedVideoCount: 24,
-      homeRecentlyWatchedVideoCount: 4,
-      homeHideChannelsOverview: true,
-      homeHideCategoriesOverview: true,
-      homeHidePlaylistsOverview: false,
-      homeMaxPlaylistsOverviewLimit: 12,
-      homeFeaturedLives: [],
-      showMoreSize: 24,
-      premiumContentAds: ["abe16c4c-d654-42e2-bf84-6cd4a236f62d"],
-      searchPageSize: 24,
-    },
-  },
-  {
-    name: "SwebbTube",
-    description: "SwebbTube är den del av Svensk Webbtelevision som låter användare själva komma till uttryck med ett breddat utbud av ämnen och perspektiv.",
-    hostname: "swebbtube.se",
-    logoUrl: "https://owntube-tv.github.io/web-client/logos/swebbtube.se.png",
   },
 ]
