@@ -9,6 +9,7 @@ import { CrtScreen } from "../../../components/helpers";
 import { spacing } from "../../../theme";
 import { GetVideosVideo } from "../../../api/models";
 import { ROUTES } from "../../../types";
+import { HeroPreviewPlayer } from "./HeroPreviewPlayer";
 
 // On-air scrim — near-black fading up/right off the backdrop, for legibility.
 const SCRIM = ["rgba(11,13,14,0.96)", "rgba(11,13,14,0.55)", "rgba(11,13,14,0)"] as const;
@@ -24,6 +25,7 @@ export const TvHero = ({
   title,
   subtitle,
   onPress,
+  playbackUrl,
 }: {
   video?: GetVideosVideo;
   backend?: string;
@@ -35,6 +37,8 @@ export const TvHero = ({
   title?: string;
   subtitle?: string;
   onPress?: () => void;
+  // When set (web), an HLS URL played muted/looped as a live backdrop.
+  playbackUrl?: string;
 }) => {
   const { colors } = useTheme();
   const { height } = useWindowDimensions();
@@ -59,6 +63,7 @@ export const TvHero = ({
     <Pressable onPress={handlePress}>
       <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
         <Image source={source} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+        {!!playbackUrl && <HeroPreviewPlayer src={playbackUrl} />}
         {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={0.4} />}
         <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
         <View style={styles.content}>
