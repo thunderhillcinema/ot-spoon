@@ -30,31 +30,39 @@ const blackAndWhite = {
   black100: "#000000",
 };
 
+// THC "on-air" ramp — matched to the platform's /live viewer (amber on zinc,
+// channel_broadcast_live.ex) and the CRT channel wall (near-black broadcast room
+// #0b0d0e + warm cream ink #e7dcc4 + tally red #e8352a, channel_wall.ex). Amber
+// is the accent; near-black/zinc are the grounds; warm cream is the ink; tally
+// red is error/live. theme500/600 = accent, 50 = bg end, 950 = text end.
+
+// Light = warm paper (fallback). The mode users see is dark.
 const light: ColorScheme = {
-  theme50: "#F5F9FD",
-  theme100: "#E0E9F4",
-  theme200: "#B8CFE5",
-  theme500: "#007EF2",
-  theme600: "#0060B9",
-  theme800: "#2E4357",
-  theme900: "#1E2F3F",
-  theme950: "#0D151D",
-  themeDesaturated500: "#607385",
-  error500: "#FF3C00",
+  theme50: "#F7F3EA",
+  theme100: "#EFE7D5",
+  theme200: "#E0D3B8",
+  theme500: "#D97706", // amber-600
+  theme600: "#B45309", // amber-700 (darker for light-mode contrast)
+  theme800: "#3A3126",
+  theme900: "#241D14",
+  theme950: "#140F09",
+  themeDesaturated500: "#8A7F6E",
+  error500: "#E8352A", // tally red
   ...blackAndWhite,
 };
 
+// Dark = the broadcast room. Near-black grounds, warm cream ink, amber accent.
 const dark: ColorScheme = {
-  theme50: "#001510",
-  theme100: "#1E2F3F",
-  theme200: "#254357",
-  theme500: "#0060B9",
-  theme600: "#007EF2",
-  theme800: "#B3CFEA",
-  theme900: "#DEEAF6",
-  theme950: "#F5F9FD",
-  themeDesaturated500: "#7A8D9F",
-  error500: "#FF3C00",
+  theme50: "#0B0D0E", // cw-room — near-black
+  theme100: "#16191B",
+  theme200: "#26292B", // cw-hair — borders/cards
+  theme500: "#D97706", // amber-600
+  theme600: "#F59E0B", // amber-500 (brighter accent in dark, mirrors original ramp)
+  theme800: "#9AA09D", // cw-ink-dim — mid text
+  theme900: "#E7DCC4", // cw-ink — warm cream
+  theme950: "#F5EFDF",
+  themeDesaturated500: "#8A8F8C",
+  error500: "#E8352A", // tally red
   ...blackAndWhite,
 };
 
