@@ -19,12 +19,6 @@ interface VideoGridCardProps {
   backend?: string;
 }
 
-// Recessed CRT screen material (kept — this is the screen, not the dropped frame).
-const CABINET = {
-  screen: "#05070A",
-  bezel: "#000000",
-};
-
 export const VideoGridCard = forwardRef<View, VideoGridCardProps>(({ video, backend }, ref) => {
   const { isDesktop } = useBreakpoints();
   const { colors } = useTheme();
@@ -142,14 +136,13 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   linkWrapper: { flex: 1 },
-  // Recessed tube: dark screen bed inset by a black bezel ring. No height:"100%" —
-  // the thumbnail carries its own explicit height, and height:"100%" collapses the
-  // wrapper on web (indefinite parent), which broke the card's height flow.
+  // On the couch the thumbnail is edge-to-edge — the focus visual is the amber
+  // glow alone, so there is no bezel/border here (a black frame peeked on the
+  // right edge of the focused, scaled tile, and its 2px border also pushed the
+  // measured image off-centre). The recessed-CRT look is carried by the CrtScreen
+  // scanline overlay ON the thumbnail. No height:"100%" — the thumbnail carries
+  // its own explicit height, and height:"100%" collapses the wrapper on web.
   linkWrapperTV: {
-    backgroundColor: CABINET.screen,
-    borderColor: CABINET.bezel,
-    borderRadius: 10,
-    borderWidth: 2,
     width: "100%",
   },
   pressableContainer: { gap: spacing.md },
