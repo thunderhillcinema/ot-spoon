@@ -111,76 +111,86 @@ export const TvHero = ({
       onHoverIn={handleHoverIn}
       onHoverOut={handleHoverOut}
     >
-      {/* Outward amber glow — the SAME staggered phosphor bloom the cards use
-          (FocusGuide), sitting BEHIND the hero (zIndex -1) so it spills past the
-          edges. Lives outside the hero's overflow:hidden as a sibling. */}
-      {IS_TV_LAYOUT && active && heroWidth > 0 && <FocusGuide width={heroWidth} height={heroHeight} />}
-      <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
-        <AnimatedImage
-          source={source}
-          style={[StyleSheet.absoluteFill, { opacity: imageBrightness, transform: [{ scale: imageScale }] }]}
-          contentFit="cover"
-          transition={200}
-        />
-        {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={active ? 0.35 : 0.4} />}
-        <LinearGradient colors={SCRIM} start={{ x: 0, y: 1 }} end={{ x: 0.9, y: 0 }} style={StyleSheet.absoluteFill} />
-        {IS_TV_LAYOUT && (
-          <>
-            {/* Neutral vignette — darker at rest, recedes on focus. */}
-            <Animated.View style={[styles.overlayFill, { opacity: vignetteOpacity }]} pointerEvents="none">
-              <LinearGradient
-                colors={[VIGNETTE, TRANSPARENT] as const}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.vignetteTop}
+      {/* The frame carries the outer inset (margins) AND is the positioned anchor
+          for the glow, so the glow surrounds the hero even though the hero is
+          inset. overflow stays visible so the bloom spills into the margin. */}
+      <View style={styles.frame}>
+        {/* Outward amber glow — the SAME staggered phosphor bloom the cards use
+            (FocusGuide), sitting BEHIND the hero (zIndex -1) so it spills past the
+            edges. Lives outside the hero's overflow:hidden as a sibling. */}
+        {IS_TV_LAYOUT && active && heroWidth > 0 && <FocusGuide width={heroWidth} height={heroHeight} />}
+        <View style={[styles.hero, { height: heroHeight }]} onLayout={(e) => setHeroWidth(e.nativeEvent.layout.width)}>
+          <AnimatedImage
+            source={source}
+            style={[StyleSheet.absoluteFill, { opacity: imageBrightness, transform: [{ scale: imageScale }] }]}
+            contentFit="cover"
+            transition={200}
+          />
+          {heroWidth > 0 && <CrtScreen width={heroWidth} height={heroHeight} intensity={active ? 0.35 : 0.4} />}
+          <LinearGradient
+            colors={SCRIM}
+            start={{ x: 0, y: 1 }}
+            end={{ x: 0.9, y: 0 }}
+            style={StyleSheet.absoluteFill}
+          />
+          {IS_TV_LAYOUT && (
+            <>
+              {/* Neutral vignette — darker at rest, recedes on focus. */}
+              <Animated.View style={[styles.overlayFill, { opacity: vignetteOpacity }]} pointerEvents="none">
+                <LinearGradient
+                  colors={[VIGNETTE, TRANSPARENT] as const}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.vignetteTop}
+                />
+                <LinearGradient
+                  colors={[TRANSPARENT, VIGNETTE] as const}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.vignetteBottom}
+                />
+                <LinearGradient
+                  colors={[VIGNETTE, TRANSPARENT] as const}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.vignetteLeft}
+                />
+                <LinearGradient
+                  colors={[TRANSPARENT, VIGNETTE] as const}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.vignetteRight}
+                />
+              </Animated.View>
+              {/* Crisp amber border — the glow's innermost edge, on the tube itself. */}
+              <Animated.View
+                style={[styles.border, { borderColor: colors.theme500, opacity: focus }]}
+                pointerEvents="none"
               />
-              <LinearGradient
-                colors={[TRANSPARENT, VIGNETTE] as const}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.vignetteBottom}
-              />
-              <LinearGradient
-                colors={[VIGNETTE, TRANSPARENT] as const}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.vignetteLeft}
-              />
-              <LinearGradient
-                colors={[TRANSPARENT, VIGNETTE] as const}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.vignetteRight}
-              />
-            </Animated.View>
-            {/* Crisp amber border — the glow's innermost edge, on the tube itself. */}
-            <Animated.View
-              style={[styles.border, { borderColor: colors.theme500, opacity: focus }]}
-              pointerEvents="none"
-            />
-          </>
-        )}
-        <View style={styles.content}>
-          <View style={styles.kickerRow}>
-            <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
-            <Typography style={styles.kicker} color={colors.theme500} fontWeight="ExtraBold">
-              {kicker}
-            </Typography>
-          </View>
-          <Typography
-            style={styles.title}
-            color={colors.white94}
-            fontSize="sizeXL"
-            fontWeight="ExtraBold"
-            numberOfLines={2}
-          >
-            {displayTitle}
-          </Typography>
-          {!!displaySubtitle && (
-            <Typography color={colors.white80} fontWeight="Medium" numberOfLines={1}>
-              {displaySubtitle}
-            </Typography>
+            </>
           )}
+          <View style={styles.content}>
+            <View style={styles.kickerRow}>
+              <View style={[styles.tally, { backgroundColor: colors.error500, shadowColor: colors.error500 }]} />
+              <Typography style={styles.kicker} color={colors.theme500} fontWeight="ExtraBold">
+                {kicker}
+              </Typography>
+            </View>
+            <Typography
+              style={styles.title}
+              color={colors.white94}
+              fontSize="sizeXL"
+              fontWeight="ExtraBold"
+              numberOfLines={2}
+            >
+              {displayTitle}
+            </Typography>
+            {!!displaySubtitle && (
+              <Typography color={colors.white80} fontWeight="Medium" numberOfLines={1}>
+                {displaySubtitle}
+              </Typography>
+            )}
+          </View>
         </View>
       </View>
     </Pressable>
@@ -193,15 +203,19 @@ const styles = StyleSheet.create({
   // Inset on every side by ~the glow radius (matching the rows' 44px padding) so
   // the outward FocusGuide bloom has the SAME room to expand as it does around the
   // thumbnails, and isn't clipped by the sticky marquee above, the sidebar to the
-  // left, or the screen edge. alignSelf:"stretch" (not width:100%) lets the
-  // horizontal margins actually inset it.
-  hero: {
+  // left, or the screen edge. The frame (not the hero) carries the inset, and it
+  // is the positioned anchor the glow surrounds. alignSelf:"stretch" (not
+  // width:100%) lets the horizontal margins actually inset it.
+  frame: {
     alignSelf: "stretch",
-    justifyContent: "flex-end",
     marginBottom: spacing.xxl,
     marginHorizontal: spacing.xxl,
     marginTop: spacing.xxl,
+  },
+  hero: {
+    justifyContent: "flex-end",
     overflow: "hidden",
+    width: "100%",
   },
   kicker: { letterSpacing: 3 },
   kickerRow: { alignItems: "center", flexDirection: "row", gap: spacing.sm },
