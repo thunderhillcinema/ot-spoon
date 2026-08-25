@@ -165,7 +165,10 @@ export const VideoGridContent = forwardRef<VideoGridContentHandle, VideoGridCont
             data={listData}
             columnWrapperStyle={numColumns > 1 && !isHorizontalScrollingEnabled ? styles.listColumnWrapper : undefined}
             style={[styles.gapXL, { overflow: "visible" }]}
-            contentContainerStyle={styles.gapXL}
+            contentContainerStyle={[
+              styles.gapXL,
+              isHorizontalScrollingEnabled && IS_TV_LAYOUT ? styles.tvRowGlowRoom : null,
+            ]}
             renderItem={isHorizontalScrollingEnabled ? renderHorizontalListItem : renderVerticalListItem}
             horizontal={isHorizontalScrollingEnabled}
           />
@@ -203,4 +206,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   loaderGridItemWeb: { height: "100%", minHeight: 314 },
+  // On native TV the FlatList clips its content to its own bounds (RN native
+  // ScrollViews clip regardless of overflow:"visible"), so the focused card's
+  // amber glow — and its 1.14 scale/lift — get cut at the row's top edge and at
+  // the first card's left edge. Pad the scroll content by ~the glow reach so the
+  // whole bloom renders INSIDE the bounds. Native TV rows only (web uses the
+  // .grid-container-tv CSS padding). Tune if the glow still clips.
+  tvRowGlowRoom: { paddingHorizontal: 64, paddingVertical: 64 },
 });

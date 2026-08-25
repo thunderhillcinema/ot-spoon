@@ -75,7 +75,7 @@ export const TvHero = ({
 
   if (!uri && !displayTitle) return null;
 
-  const heroHeight = compact ? Math.min(Math.round(height * 0.62), 560) : Math.min(Math.round(height * 0.52), 480);
+  const heroHeight = compact ? Math.min(Math.round(height * 0.72), 760) : Math.min(Math.round(height * 0.64), 680);
   const source = uri ? { uri } : undefined;
 
   const handlePress =
