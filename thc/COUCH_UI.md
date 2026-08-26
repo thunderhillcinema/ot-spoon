@@ -128,7 +128,7 @@ LOOK, not the focus behaviour. Two things only a simulator/TV build exercises:
 
 ```
 cd OwnTube.tv
-EXPO_PUBLIC_TV_PREVIEW=1 EXPO_PUBLIC_APP_NAME="Thunderhill Cinema" EXPO_PUBLIC_USER_INTERFACE_STYLE=dark npm run web
+EXPO_PUBLIC_TV_PREVIEW=1 EXPO_PUBLIC_APP_NAME="Thunder Hill Cinema" EXPO_PUBLIC_USER_INTERFACE_STYLE=dark npm run web
 ```
 
 Then open localhost:8081 (tunnel it if the browser is on another host). For the

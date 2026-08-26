@@ -29,7 +29,7 @@ jobs:
           "WEB_URL": ""
         }
       customizations_env_content: |
-        EXPO_PUBLIC_APP_NAME=Thunderhill Cinema
+        EXPO_PUBLIC_APP_NAME='Thunder Hill Cinema'
         EXPO_PUBLIC_APP_SLUG=thunderhillcinema
         EXPO_PUBLIC_IOS_BUNDLE_IDENTIFIER=com.thunderhillcinema.tv
         EXPO_PUBLIC_USER_INTERFACE_STYLE=dark

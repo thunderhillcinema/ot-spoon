@@ -1,14 +1,14 @@
-// THC (Thunderhill Cinema) preview curation — cinema/film/art-leaning public
+// THC (Thunder Hill Cinema) preview curation — cinema/film/art-leaning public
 // PeerTube instances, drawing from EXISTING instances (aggregator model). Probed
 // reachable 2026-08-25. This is a preview list for the web spike; the canonical
-// branded app (cust-app-thc) will own the real curation + a THC primary backend.
+// branded app (thc-plate) will own the real curation + a THC primary backend.
 [
   {
     name: "Cinema — PeerTube Uno",
     description: "Italian film & cinema — full features and a dedicated cinema channel.",
     hostname: "peertube.uno",
     customizations: {
-      pageTitle: "Thunderhill Cinema",
+      pageTitle: "Thunder Hill Cinema",
       homeLatestPublishedVideoCount: 12,
       homeUseHorizontalListsForMobilePortrait: true,
     },
@@ -18,7 +18,7 @@
     description: "Open movies, tutorials and animated shorts from the Blender Foundation.",
     hostname: "video.blender.org",
     customizations: {
-      pageTitle: "Thunderhill Cinema — Blender",
+      pageTitle: "Thunder Hill Cinema — Blender",
       homeUseHorizontalListsForMobilePortrait: true,
     },
   },

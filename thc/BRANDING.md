@@ -17,7 +17,7 @@ flagged ⛔.
 
 | Lever                     | Where                                                                           | THC value                                                                                            |
 | ------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| App name / slug           | `EXPO_PUBLIC_APP_NAME` / `_APP_SLUG` (`app.config.ts:13-14`)                    | "Thunderhill Cinema" / "thunderhillcinema"                                                           |
+| App name / slug           | `EXPO_PUBLIC_APP_NAME` / `_APP_SLUG` (`app.config.ts:13-14`)                    | "Thunder Hill Cinema" / "thunderhillcinema"                                                          |
 | Primary backend           | `EXPO_PUBLIC_PRIMARY_BACKEND` (+ `customizations.menuHideLeaveButton`)          | ⛔ needs a THC PeerTube host (pt-knife not deployed) — stand-in below                                |
 | Theme colors              | `theme/colors.ts` `theme50…theme950` scale, light+dark (`:37-80`)               | ⛔ THC brand palette (note: OwnTube's default splash is cinema-orange `#F95F1E`, `app.config.ts:23`) |
 | App icon / splash         | `EXPO_PUBLIC_ICON` / `_SPLASH_IMAGE` / `_SPLASH_BG_COLOR`                       | ⛔ THC logo assets                                                                                   |
@@ -29,7 +29,7 @@ flagged ⛔.
 
 ```
 # Identity
-EXPO_PUBLIC_APP_NAME=Thunderhill Cinema
+EXPO_PUBLIC_APP_NAME='Thunder Hill Cinema'
 EXPO_PUBLIC_APP_SLUG=thunderhillcinema
 EXPO_PUBLIC_IOS_BUNDLE_IDENTIFIER=com.thunderhillcinema.tv
 EXPO_PUBLIC_ANDROID_PACKAGE=com.thunderhillcinema.tv

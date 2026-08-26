@@ -10,6 +10,10 @@ on:
         required: false
         type: string
         description: "The repository with OwnTube-tv/web-client code. Defaults to the source repository."
+      owntube_ref:
+        required: false
+        type: string
+        description: "Branch, tag, or SHA of the OwnTube source repository. Defaults to its default branch."
       use_parent_repo_customizations:
         required: false
         type: boolean
@@ -41,6 +45,10 @@ on:
         required: false
         type: string
         description: "The repository with OwnTube-tv/web-client code. Defaults to the source repository."
+      owntube_ref:
+        required: false
+        type: string
+        description: "Branch, tag, or SHA of the OwnTube source repository. Defaults to its default branch."
       use_parent_repo_customizations:
         required: false
         type: boolean
@@ -156,6 +164,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.owntube_source || github.repository }}
+          ref: ${{ inputs.owntube_ref }}
 
       - name: Checkout parent repo with customizations
         uses: actions/checkout@v4

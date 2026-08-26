@@ -61,7 +61,7 @@ fi
 
 # ── 4. THC branding env (source already carries palette + instances) ─────────
 export EXPO_TV=1
-export EXPO_PUBLIC_APP_NAME="Thunderhill Cinema"
+export EXPO_PUBLIC_APP_NAME="Thunder Hill Cinema"
 export EXPO_PUBLIC_APP_SLUG="thunderhillcinema"
 export EXPO_PUBLIC_USER_INTERFACE_STYLE="dark"
 

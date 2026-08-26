@@ -147,3 +147,7 @@ dist
 # THC tvOS build artifacts (from CI download / tv-install.sh)
 /tvbuild/
 /OwnTubetv.app/
+# Downloaded simulator .app bundles (gh run download artifact name)
+/tvos-simulator-app.app/
+/ios-simulator-app.app/
+/*-simulator-app.app/
